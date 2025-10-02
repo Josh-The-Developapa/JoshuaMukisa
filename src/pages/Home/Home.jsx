@@ -380,10 +380,27 @@ const Home = () => {
                     <div>
                       <h4 className="font-medium text-gray-900">Phone</h4>
                       <Link
-                        to="tel:+256755779927"
+                        to="tel:+12544009785"
                         className="text-gray-600 hover:text-gray-900"
                       >
-                        +256 755 779 927
+                        +1 254 400 9785
+                      </Link>
+                    </div>
+                  </div>
+                  {/* WhatsApp */}
+                  <div className="flex items-start">
+                    <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center mr-4">
+                      <i className="fab fa-whatsapp text-green-500"></i>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900">WhatsApp</h4>
+                      <Link
+                        to="https://wa.me/12544009785"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-green-500 hover:text-green-700"
+                      >
+                        Chat with me on WhatsApp
                       </Link>
                     </div>
                   </div>
@@ -394,7 +411,7 @@ const Home = () => {
                   </h4>
                   <div className="flex space-x-4">
                     <Link
-                      to="https://www.linkedin.com/in/joshua-mukisa-kiryowa/"
+                      to="https://www.linkedin.com/in/joshua-mukisa/"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-700 hover:bg-blue-100 hover:text-blue-500"

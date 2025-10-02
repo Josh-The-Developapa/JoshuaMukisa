@@ -54,7 +54,7 @@ const aboutConfig = {
     },
     {
       name: 'LinkedIn',
-      url: 'https://linkedin.com/in/joshua-mukisa-kiryowa/',
+      url: 'https://www.linkedin.com/in/joshua-mukisa/',
       icon: 'fab fa-linkedin',
     },
     {

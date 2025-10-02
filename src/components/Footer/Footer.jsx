@@ -107,7 +107,7 @@ const Footer = () => {
               <ul className="space-y-2">
                 <li>
                   <a
-                    href="https://www.linkedin.com/in/joshua-mukisa-kiryowa/"
+                    href="https://www.linkedin.com/in/joshua-mukisa/"
                     target="_blank"
                     className="text-gray-400 hover:text-white transition duration-300"
                   >
