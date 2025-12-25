@@ -40,11 +40,11 @@ const experienceConfig = {
       website: '',
       logoAlt: 'Videra Logo',
       achievements: [
-        'Co-founded a creative tech collective specializing in sleek websites and web apps',
-        'Delivered custom digital solutions for clients, focusing on both frontend design and full-stack development',
-        'Led development of Cadera, a School Information System that streamlines report card management and academic records',
-        'Helped schools digitize academic reporting, boosting efficiency and data accuracy',
-        'Managed client relations, project timelines, and collaborated closely with a growing team',
+        'Co-founded Videra Digital, a SaaS-driven technology company focused on building scalable digital products.',
+        "Led the company's first major venture into EdTech through the development of Cadera, a School Information System (SIS).",
+        'Designed Cadera as a multi-school, cloud-based platform to digitize and streamline school operations.',
+        'Worked directly with schools to replace manual reporting with an accurate, efficient, and data-driven system.',
+        'Managed product direction, client relationships, and cross-functional collaboration within a growing team.',
       ],
     },
     // {

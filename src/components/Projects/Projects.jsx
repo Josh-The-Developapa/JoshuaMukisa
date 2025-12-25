@@ -34,7 +34,7 @@ const projectsConfig = {
     {
       title: 'Cadera',
       description:
-        'A smart academic records system built to modernize how schools manage report cards and student performance. Faster, simpler, and more secure.',
+        'A complete School Information System that simplifies grading, reporting, teacher management, and academic workflows through a single, integrated platform.',
       tags: [
         { name: 'React', color: 'bg-blue-100', textColor: 'text-blue-700' },
         { name: 'NestJS', color: 'bg-green-100', textColor: 'text-green-700' },

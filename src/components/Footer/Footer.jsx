@@ -40,9 +40,7 @@ const Footer = () => {
                 JM
               </text>
             </svg>
-            <p className="mt-2 text-gray-400">
-              Building digital experiences that matter.
-            </p>
+            <p className="mt-2 text-gray-400">Wakanda is the goal.</p>
           </div>
           <div className="grid grid-cols-2 gap-8 md:grid-cols-3">
             <div>
