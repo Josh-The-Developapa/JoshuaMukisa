@@ -295,11 +295,11 @@ const Home = () => {
                 Software Developer
               </h2>
               <p className="text-base sm:text-lg md:text-[18px] text-gray-500 mb-8 font-[400] leading-relaxed text-justify">
-                I'm a software developer with 5+ years of experience building
-                full-stack apps, AI/ML systems, and real-world IoT solutions.
-                I'm driven by the goal to see Wakanda become a reality and the
-                desire to inspire a generation of Africans to rise, lead, and
-                redefine the global tech space.
+                I'm a software developer with over half a decade in experience
+                building full-stack apps, AI/ML systems, and real-world IoT
+                solutions. I'm driven by the desire to inspire a generation of
+                Africans to rise, lead, and redefine the global tech space.
+                Wakanda is the goal!
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link

@@ -50,7 +50,7 @@ const projectsConfig = {
         },
       ],
       image: CaderaImg,
-      statusText: 'In Progress',
+      statusText: 'Coming Out in 2026',
     },
     {
       title: 'CImage AI',

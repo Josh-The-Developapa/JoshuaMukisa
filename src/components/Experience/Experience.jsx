@@ -2,9 +2,9 @@ import React from 'react';
 import DEI from '../../assets/DEI BioPharm Ltd.png';
 import UpLift from '../../assets/UpLift.jpg';
 import ElectoralComission from '../../assets/Electoral Comission.png';
-// import GreatLakeSafaris from '../../assets/Great-Lakes-Safaris.png';
 import VoteAbleLogo from '../../assets/VoteAble-Logo.jpg';
-import VideraLogo from '../../assets/Videra-Logo.jpg';
+import VideraLogo from '../../assets/Videra Logo.png';
+import CaderaLogo from '../../assets/Cadera Logo.png';
 import MakariosLogo from '../../assets/makarios.png';
 import AgaKhanLogo from '../../assets/Aga-Khan.png';
 import { Link } from 'react-router';
@@ -15,6 +15,22 @@ const experienceConfig = {
   subtitle: '',
   experiences: [
     {
+      title: 'Co-Founder',
+      company: 'Videra Digital',
+      period: 'May 2025 - Present',
+      location: '',
+      logo: VideraLogo,
+      website: '',
+      logoAlt: 'Videra Logo',
+      showInShowcase: false, // Control showcase visibility per experience
+      achievements: [
+        'Co-founded Videra Digital, a SaaS company focused on building scalable data management ecosystems.',
+        'Led frontend engineering across Videra products, translating UI/UX designs into performant, responsive, production-ready interfaces',
+        'Spearheaded the development of Cadera, a School Information System used by real institutions to manage grading, reporting, and academic workflows',
+        'Collaborated cross-functionally on product direction, system architecture, and long-term technical strategy as a co-founder',
+      ],
+    },
+    {
       title: 'CEO & Founder',
       company: 'VoteAble Inc',
       period: 'July 2022 - Present',
@@ -22,6 +38,7 @@ const experienceConfig = {
       logo: VoteAbleLogo,
       website: 'https://voteable.live',
       logoAlt: 'VoteAble Logo',
+      showInShowcase: false, // Control showcase visibility per experience
       achievements: [
         "Founded and led a full-stack e-voting platform for Ugandan schools' student council elections",
         "Architected and developed VoteAble's core codebase as the principal software engineer",
@@ -32,53 +49,6 @@ const experienceConfig = {
       ],
     },
     {
-      title: 'Co-Founder',
-      company: 'Videra Digital',
-      period: 'May 2025 - Present',
-      location: '',
-      logo: VideraLogo,
-      website: '',
-      logoAlt: 'Videra Logo',
-      achievements: [
-        'Co-founded Videra Digital, a SaaS-driven technology company focused on building scalable digital products.',
-        "Led the company's first major venture into EdTech through the development of Cadera, a School Information System (SIS).",
-        'Designed Cadera as a multi-school, cloud-based platform to digitize and streamline school operations.',
-        'Worked directly with schools to replace manual reporting with an accurate, efficient, and data-driven system.',
-        'Managed product direction, client relationships, and cross-functional collaboration within a growing team.',
-      ],
-    },
-    // {
-    //   title: 'Digital Operations & IT Assistant',
-    //   company: 'Great Lake Safaris Ltd',
-    //   period: 'June 2024 - Aug 2024',
-    //   location: 'Mutungo Hill, Biina Road - Kampala, Uganda',
-    //   logo: GreatLakeSafaris,
-    //   website: 'https://greatlakessafaris.com',
-    //   logoAlt: 'Great Lake Safaris Logo',
-    //   achievements: [
-    //     'Collaborated directly with CEO Amos Wekesa, gaining firsthand exposure to East African tourism strategy and real-time decision-making',
-    //     'Assisted in website content management and proposed automation workflows to enhance booking efficiency and user experience',
-    //     'Researched and summarized emerging tech trends (e.g. mobile booking, digital marketing tools), recommending tools to boost operational efficiency and online presence',
-    //   ],
-    // },
-    // {
-    //   title: 'IT & Operations Intern',
-    //   company: 'DEI BioPharma Ltd',
-    //   period: 'December 2024 - April 2025',
-    //   location: 'Matugga, Bombo Road - Kampala, Uganda',
-    //   logo: DEI,
-    //   website: 'https://www.deibiopharma.com',
-    //   logoAlt: 'DEI BioPharma Ltd Logo',
-    //   achievements: [
-    //     'Worked closely with Managing Director, Dr. Matthias Magoola, gaining valuable insight into leadership',
-    //     'Observed pharmaceutical manufacturing and quality control processes',
-    //     'Helped digitize inventory records using spreadsheets and simple tracking tools',
-    //     'Assisted with basic IT tasks, including file management and equipment setup',
-    //     'Shadowed staff to understand how tech supports lab operations and data handling',
-    //     'Gained exposure to Good Manufacturing Practices (GMP) and pharmaceutical workflows',
-    //   ],
-    // },
-    {
       title: 'Electoral Data & Logistics Intern',
       company: 'Electoral Commission of Uganda',
       period: 'Jun 2022',
@@ -86,6 +56,7 @@ const experienceConfig = {
       logo: ElectoralComission,
       website: 'https://ec.or.ug',
       logoAlt: 'Electoral Commission of Uganda Logo',
+      showInShowcase: true,
       achievements: [
         'Organized and distributed voter registration books to district heads during electoral processes',
         'Supported election logistics and district coordination with administrative precision',
@@ -101,6 +72,7 @@ const experienceConfig = {
       logo: UpLift,
       website: 'https://uplift-w81m.onrender.com',
       logoAlt: 'UpLift Establishment Limited Logo',
+      showInShowcase: true,
       achievements: [
         'Built and developed a dynamic website from the ground up',
         'Led UI revisions to improve user experience and interface design',
@@ -115,11 +87,13 @@ const experienceConfig = {
       name: 'Makarios Junior School',
       logo: MakariosLogo,
       logoAlt: 'Makarios-Logo',
+      showInShowcase: true,
     },
     {
       name: 'Aga Khan High School',
       logo: AgaKhanLogo,
       logoAlt: 'Aga-Khan-Logo',
+      showInShowcase: true,
     },
   ],
 };
@@ -231,6 +205,7 @@ const ExperienceCard = ({
   headerClassName = '',
   metaClassName = '',
   achievementsClassName = '',
+  linkComponent: LinkComponent = Link, // Allow custom link component
 }) => (
   <div className="mb-8 sm:mb-12 relative">
     {showDot && <TimelineDot dotColor={dotColor} />}
@@ -239,26 +214,40 @@ const ExperienceCard = ({
     >
       {/* Header with Logo */}
       <div className={`flex items-start gap-4 mb-4 ${headerClassName}`}>
-        <Link to={experience.website} target="_blank">
+        {experience.website ? (
+          <LinkComponent to={experience.website} target="_blank">
+            <CompanyLogo
+              logo={experience.logo}
+              logoAlt={experience.logoAlt}
+              company={experience.company}
+            />
+          </LinkComponent>
+        ) : (
           <CompanyLogo
             logo={experience.logo}
             logoAlt={experience.logoAlt}
             company={experience.company}
           />
-        </Link>
+        )}
 
         <div className="flex-1 min-w-0">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
             <h3 className="text-lg sm:text-xl font-semibold text-gray-900 leading-tight">
               {experience.title}
             </h3>
-            <Link
-              to={experience.website}
-              target="_blank"
-              className="text-blue-500 font-medium text-sm sm:text-base flex-shrink-0"
-            >
-              {experience.company}
-            </Link>
+            {experience.website ? (
+              <LinkComponent
+                to={experience.website}
+                target="_blank"
+                className="text-blue-500 font-medium text-sm sm:text-base flex-shrink-0"
+              >
+                {experience.company}
+              </LinkComponent>
+            ) : (
+              <span className="text-gray-700 font-medium text-sm sm:text-base flex-shrink-0">
+                {experience.company}
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -306,20 +295,28 @@ const TimelineContainer = ({
   </div>
 );
 
-// Modified CompanyShowcase Component with additional clients/partners support
+// Modified CompanyShowcase Component - now filters based on showInShowcase flag
 const CompanyShowcase = ({
   experiences,
-  additionalClients = [], // New prop for additional clients/partners
+  additionalClients = [],
   className = '',
   logoWidth = 'w-32',
   logoHeight = 'h-24',
   animationSpeed = '60s',
-  showcaseTitle = 'Proud to have worked with', // Customizable title
+  showcaseTitle = 'Proud to have worked with',
 }) => {
-  const companiesWithLogos = experiences.filter((exp) => exp.logo);
+  // Filter experiences that should be shown in showcase
+  const showcaseExperiences = experiences.filter(
+    (exp) => exp.logo && exp.showInShowcase !== false
+  );
 
-  // Combine experience companies with additional clients
-  const allCompanies = [...companiesWithLogos, ...additionalClients];
+  // Filter additional clients that should be shown
+  const showcaseClients = additionalClients.filter(
+    (client) => client.logo && client.showInShowcase !== false
+  );
+
+  // Combine filtered companies
+  const allCompanies = [...showcaseExperiences, ...showcaseClients];
 
   if (allCompanies.length === 0) return null;
 
@@ -360,16 +357,6 @@ const CompanyShowcase = ({
               height={logoHeight}
             />
           ))}
-
-          {/* Keep the Makarios logo as it was hardcoded before */}
-          <FlowingCompanyLogo
-            key={`flowing-company-makarios`}
-            logo={MakariosLogo}
-            logoAlt="Makarios-Logo"
-            company="Makarios Junior School"
-            width={logoWidth}
-            height={logoHeight}
-          />
         </div>
 
         {/* Gradient Overlays for smooth edges */}
@@ -399,7 +386,7 @@ const CompanyShowcase = ({
   );
 };
 
-// Updated ExperienceSection to pass additional clients
+// Updated ExperienceSection - more configurable and reusable
 const ExperienceSection = ({
   config = experienceConfig,
   sectionId = 'experience',
@@ -411,14 +398,19 @@ const ExperienceSection = ({
   timelineLineColor = 'border-gray-200',
   dotColor = 'bg-blue-500',
   cardLayout = 'default',
-  // Company showcase props
   showcaseLogoWidth = 'w-40',
   showcaseLogoHeight = 'h-30',
   showcaseAnimationSpeed = '40s',
   showcaseTitle = 'Proud to have worked with',
-  // New prop for additional clients/partners
-  additionalClients = experienceConfig.additionalClients,
+  additionalClients,
+  linkComponent, // Allow passing custom link component
 }) => {
+  // Use additionalClients from props if provided, otherwise use from config
+  const clientsToShow =
+    additionalClients !== undefined
+      ? additionalClients
+      : config.additionalClients;
+
   const renderExperiences = () => {
     const experienceElements = config.experiences.map((experience, index) => (
       <ExperienceCard
@@ -426,6 +418,7 @@ const ExperienceSection = ({
         experience={experience}
         showDot={showTimeline}
         dotColor={dotColor}
+        linkComponent={linkComponent}
         cardClassName={
           cardLayout === 'compact'
             ? 'p-3 sm:p-4'
@@ -467,7 +460,7 @@ const ExperienceSection = ({
         {showCompanyShowcase && (
           <CompanyShowcase
             experiences={config.experiences}
-            additionalClients={additionalClients}
+            additionalClients={clientsToShow}
             logoWidth={showcaseLogoWidth}
             logoHeight={showcaseLogoHeight}
             animationSpeed={showcaseAnimationSpeed}
