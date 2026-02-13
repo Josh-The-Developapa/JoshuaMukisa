@@ -91,26 +91,18 @@ function MobileCarousel({ images, intervalMs = 4000 }) {
   };
 
   const variants = {
-    enter: (d) => ({
-      x: d > 0 ? '100%' : '-100%',
-      opacity: 0,
-      position: 'relative',
-    }),
-    center: { x: 0, opacity: 1, position: 'relative' },
-    exit: (d) => ({
-      x: d > 0 ? '-55%' : '55%',
-      opacity: 0,
-      position: 'absolute',
-      top: 0,
-      left: 0,
-    }),
+    enter: (d) => ({ x: d > 0 ? '100%' : '-100%', opacity: 0 }),
+    center: { x: 0, opacity: 1 },
+    exit: (d) => ({ x: d > 0 ? '-55%' : '55%', opacity: 0 }),
   };
 
   return (
     /* md:hidden — only visible on mobile */
     <div className="w-full select-none md:hidden">
+      {/* aspect-[4/3] is fixed on the OUTER container — slides are absolute inside it so
+          the container height never changes as images transition, preventing layout shifts */}
       <div
-        className="relative w-full overflow-hidden rounded-2xl border-4 border-white shadow-2xl cursor-grab active:cursor-grabbing"
+        className="relative w-full aspect-[4/3] overflow-hidden rounded-2xl border-4 border-white shadow-2xl cursor-grab active:cursor-grabbing"
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
         onMouseDown={onMouseDown}
@@ -126,13 +118,13 @@ function MobileCarousel({ images, intervalMs = 4000 }) {
             animate="center"
             exit="exit"
             transition={{ duration: 0.45, ease: [0.32, 0.72, 0, 1] }}
-            style={{ width: '100%' }}
+            className="absolute inset-0"
           >
             <img
               src={images[current]}
               alt={`Slide ${current + 1} of ${count}`}
               draggable={false}
-              className="w-full h-auto block pointer-events-none"
+              className="w-full h-full object-cover pointer-events-none"
             />
           </motion.div>
         </AnimatePresence>
@@ -460,7 +452,7 @@ export default function ValentinesForMonica() {
             </div>
 
             {/* Mobile carousel */}
-            <div className="order-1 md:order-2">
+            <div className="order-1 md:hidden">
               <MobileCarousel
                 images={[Pic1, Pic15, Pic16, Pic17]}
                 intervalMs={4500}
