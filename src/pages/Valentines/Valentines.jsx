@@ -859,7 +859,7 @@ export default function ValentinesForMonica() {
                               : 'opacity-0 translate-y-12'
                           }`}
           >
-            Pepe &amp; Meme
+            Pépé &amp; Mémé
           </h2>
           <p className="text-2xl sm:text-3xl md:text-5xl text-rose-800 font-light mb-8 md:mb-20">
             I cannot wait to spend the rest of my life with you boo boo!!
