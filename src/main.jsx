@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router';
 import './index.css';
 import Home from './pages/Home/Home';
 import ValentinesForMonica from './pages/Valentines/Valentines';
+import ForexGraphs from './pages/Economics/Economics';
 
 const router = createBrowserRouter([
   {
@@ -14,10 +15,14 @@ const router = createBrowserRouter([
     path: '/josh-and-mon',
     element: <ValentinesForMonica />,
   },
+  {
+    path: '/econ-monica',
+    element: <ForexGraphs />,
+  },
 ]);
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <RouterProvider router={router} />
-  </StrictMode>
+  </StrictMode>,
 );
