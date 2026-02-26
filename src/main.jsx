@@ -4,20 +4,21 @@ import { createBrowserRouter, RouterProvider } from 'react-router';
 import './index.css';
 import Home from './pages/Home/Home';
 import ValentinesForMonica from './pages/Valentines/Valentines';
-import ForexGraphs from './pages/Economics/Economics';
+import RebuiltInGold from './pages/Sorry/Sorry';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <Home />,
   },
+  // {
+  //   path: '/josh-and-mon',
+  //   element: <ValentinesForMonica />,
+  // },
+
   {
-    path: '/josh-and-mon',
-    element: <ValentinesForMonica />,
-  },
-  {
-    path: '/econ-monica',
-    element: <ForexGraphs />,
+    path: '/sorry',
+    element: <RebuiltInGold />,
   },
 ]);
 
