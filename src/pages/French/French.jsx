@@ -923,49 +923,234 @@ const css = `
 
   /* Divider */
   .divider { height: 1px; background: linear-gradient(to right, transparent, rgba(0,0,0,0.1), transparent); margin: 28px 0; }
+
+  /* ── STATS PANEL ── */
+  .stats-panel {
+    background: var(--ink); border-bottom: 2px solid var(--gold);
+    box-shadow: 0 8px 32px var(--shadow-lg);
+    animation: slideDown 0.25s ease;
+  }
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .stats-inner { max-width: 1100px; margin: 0 auto; padding: 28px 32px; }
+  .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 20px; margin-bottom: 28px; }
+  .stat-block {
+    background: rgba(255,255,255,0.06); border-radius: 14px; padding: 18px 20px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 40px; font-weight: 700; color: var(--gold-light); line-height: 1; }
+  .stat-label { font-size: 13px; color: var(--cream); opacity: 0.8; margin: 6px 0 4px; font-weight: 500; }
+  .stat-sub { font-size: 11px; color: var(--cream); opacity: 0.4; }
+  .stat-bar { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 10px; }
+  .stat-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+
+  .stats-topics-title {
+    font-family: 'Playfair Display', serif; font-size: 13px; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 14px; opacity: 0.8;
+  }
+  .stats-topics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 8px; }
+  .stats-topic-row {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 10px; padding: 12px 14px; cursor: pointer; transition: all 0.18s;
+    display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto auto; gap: 4px 8px;
+    align-items: center;
+  }
+  .stats-topic-row:hover { background: rgba(255,255,255,0.1); border-color: var(--gold); }
+  .stp-name { font-size: 13px; color: var(--cream); font-weight: 500; }
+  .stp-bar-wrap { display: flex; align-items: center; gap: 8px; grid-column: 1; }
+  .stp-bar { flex: 1; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; }
+  .stp-fill { height: 100%; background: var(--sage); border-radius: 2px; transition: width 0.5s ease; }
+  .stp-pct { font-size: 11px; color: var(--gold); white-space: nowrap; min-width: 36px; text-align: right; }
+  .stp-quiz { font-size: 11px; color: rgba(255,255,255,0.4); grid-column: 1; }
+  .stp-date { font-size: 11px; color: var(--sage); grid-column: 2; grid-row: 1 / 3; align-self: center; white-space: nowrap; }
+
+  /* Topic pill progress % */
+  .pill-pct {
+    display: inline-block; background: rgba(255,255,255,0.25);
+    font-size: 10px; font-weight: 700; padding: 1px 5px;
+    border-radius: 4px; margin-right: 5px; letter-spacing: 0;
+  }
+  .topic-pill.active .pill-pct { background: rgba(255,255,255,0.3); }
+
+  /* Reset button */
+  .reset-btn {
+    background: none; border: 1.5px solid rgba(0,0,0,0.12); color: var(--ink-light);
+    border-radius: 8px; padding: 6px 10px; cursor: pointer; font-size: 14px;
+    transition: all 0.2s; margin-left: 4px;
+  }
+  .reset-btn:hover { border-color: var(--bordeaux); color: var(--bordeaux); }
+
+  /* Flashcard progress bar */
+  .fc-progress-wrap { display: flex; align-items: center; gap: 12px; max-width: 580px; margin: 0 auto 16px; }
+  .fc-progress-bar { flex: 1; height: 5px; background: rgba(0,0,0,0.08); border-radius: 3px; }
+  .fc-progress-fill { height: 100%; background: var(--gold); border-radius: 3px; transition: width 0.3s ease; }
+  .fc-progress-label { font-size: 12px; color: var(--ink-light); white-space: nowrap; }
+
+  /* Known badge on card */
+  .known-badge {
+    position: absolute; top: 14px; right: 14px;
+    background: var(--sage); color: white; font-size: 10px; font-weight: 600;
+    padding: 3px 8px; border-radius: 100px; letter-spacing: 0.5px;
+  }
+
+  /* Session mini counter */
+  .session-mini { font-size: 13px; min-width: 70px; text-align: center; }
+
+  /* Completion all-time */
+  .completion-alltime {
+    font-size: 14px; color: var(--ink-light); margin-bottom: 20px;
+    background: var(--parchment); padding: 10px 20px; border-radius: 10px;
+    display: inline-block;
+  }
+
+  /* Known vocab item highlight */
+  .vocab-known { border-left: 3px solid var(--sage) !important; }
+  .vocab-check { color: var(--sage); font-weight: 700; font-size: 13px; margin-right: 4px; }
+
+  /* Grammar tense progress */
+  .tense-progress-bar {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--parchment); border-radius: 10px; padding: 10px 16px;
+    margin-bottom: 20px; font-size: 13px; color: var(--ink-light);
+  }
+  .tpb-track { flex: 1; height: 6px; background: rgba(0,0,0,0.08); border-radius: 3px; }
+  .tpb-fill { height: 100%; background: var(--bordeaux); border-radius: 3px; transition: width 0.5s ease; }
+  .studied-check {
+    font-size: 10px; background: var(--sage); color: white;
+    border-radius: 100px; padding: 1px 5px; margin-left: 4px;
+  }
+  .tense-studied-badge {
+    background: rgba(90,122,92,0.12); color: var(--sage);
+    border: 1px solid var(--sage); border-radius: 100px;
+    padding: 4px 12px; font-size: 12px; font-weight: 600;
+    white-space: nowrap; align-self: flex-start; margin-top: 4px;
+  }
 `;
+
+// ── LOCAL STORAGE HOOK ───────────────────────────────────────────────────────
+
+function useLS(key, initial) {
+  const [val, setVal] = useState(() => {
+    try {
+      const stored = localStorage.getItem(key);
+      return stored !== null ? JSON.parse(stored) : initial;
+    } catch {
+      return initial;
+    }
+  });
+  const set = (v) => {
+    const next = typeof v === 'function' ? v(val) : v;
+    setVal(next);
+    try {
+      localStorage.setItem(key, JSON.stringify(next));
+    } catch {}
+  };
+  return [val, set];
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+
+function todayStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function totalKnownAcrossTopics(progress) {
+  return Object.values(progress).reduce(
+    (s, t) => s + (t.known?.length ?? 0),
+    0,
+  );
+}
+
+function totalWordsAcrossTopics() {
+  return Object.values(VOCAB_TOPICS).reduce((s, arr) => s + arr.length, 0);
+}
 
 // ── COMPONENT ────────────────────────────────────────────────────────────────
 
 export default function FrenchLearner() {
-  const [tab, setTab] = useState('vocab');
-  const [topic, setTopic] = useState(Object.keys(VOCAB_TOPICS)[0]);
-  const [mode, setMode] = useState('flashcard'); // flashcard | list | quiz
+  // ── Persisted UI state ──
+  const [tab, setTab] = useLS('bc_tab', 'vocab');
+  const [topic, _setTopic] = useLS('bc_topic', Object.keys(VOCAB_TOPICS)[0]);
+  const [mode, setMode] = useLS('bc_mode', 'flashcard');
+  const [tense, _setTense] = useLS('bc_tense', Object.keys(TENSES)[0]);
+
+  // ── Persisted learning data ──
+  // { [topic]: { known: number[], unknown: number[], completedAt: string|null } }
+  const [progress, setProgress] = useLS('bc_progress', {});
+  // { [topic]: { correct: number, wrong: number } }
+  const [quizScores, setQuizScores] = useLS('bc_quiz_scores', {});
+  // Set of tense names the user has opened
+  const [tensesStudied, setTensesStudied] = useLS('bc_tenses_studied', []);
+  // Daily streak: { lastDate: string, count: number }
+  const [streak, setStreak] = useLS('bc_streak', { lastDate: '', count: 0 });
+  // Total flashcard rounds ever completed
+  const [roundsDone, setRoundsDone] = useLS('bc_rounds_done', 0);
+
+  // ── Ephemeral session state ──
   const [cardIndex, setCardIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
-  const [known, setKnown] = useState(new Set());
-  const [unknown, setUnknown] = useState(new Set());
-  const [tense, setTense] = useState(Object.keys(TENSES)[0]);
-  // quiz
+  const [sessionKnown, setSessionKnown] = useState(new Set());
+  const [sessionUnknown, setSessionUnknown] = useState(new Set());
   const [quizQ, setQuizQ] = useState(null);
   const [quizOptions, setQuizOptions] = useState([]);
   const [quizAnswer, setQuizAnswer] = useState(null);
-  const [quizScore, setQuizScore] = useState({ correct: 0, wrong: 0 });
+  const [sessionQuiz, setSessionQuiz] = useState({ correct: 0, wrong: 0 });
+  const [showStats, setShowStats] = useState(false);
 
   const words = VOCAB_TOPICS[topic];
+  const topicProgress = progress[topic] ?? {
+    known: [],
+    unknown: [],
+    completedAt: null,
+  };
+  const quizScore = quizScores[topic] ?? { correct: 0, wrong: 0 };
 
-  // Reset on topic change
-  useEffect(() => {
+  // ── Streak tracking ── bump on first action each day
+  const bumpStreak = () => {
+    const today = todayStr();
+    setStreak((s) => {
+      if (s.lastDate === today) return s;
+      const yesterday = new Date(Date.now() - 86400000)
+        .toISOString()
+        .slice(0, 10);
+      return {
+        lastDate: today,
+        count: s.lastDate === yesterday ? s.count + 1 : 1,
+      };
+    });
+  };
+
+  // ── Topic change: reset session but keep saved progress ──
+  const setTopic = (t) => {
+    _setTopic(t);
     setCardIndex(0);
     setFlipped(false);
-    setKnown(new Set());
-    setUnknown(new Set());
-    if (mode === 'quiz') generateQuiz(VOCAB_TOPICS[topic]);
-  }, [topic]);
+    setSessionKnown(new Set());
+    setSessionUnknown(new Set());
+    setQuizAnswer(null);
+    setSessionQuiz({ correct: 0, wrong: 0 });
+    if (mode === 'quiz') setTimeout(() => generateQuiz(VOCAB_TOPICS[t]), 0);
+  };
+
+  const setTense = (t) => {
+    _setTense(t);
+    if (!tensesStudied.includes(t)) setTensesStudied((prev) => [...prev, t]);
+    bumpStreak();
+  };
 
   useEffect(() => {
     setQuizAnswer(null);
+    setSessionQuiz({ correct: 0, wrong: 0 });
     if (mode === 'quiz') generateQuiz(words);
-    if (mode !== 'quiz') {
-      setQuizScore({ correct: 0, wrong: 0 });
-    }
   }, [mode]);
 
+  // ── Quiz ──
   function generateQuiz(wordList) {
-    const pool = wordList;
-    const idx = Math.floor(Math.random() * pool.length);
-    const correct = pool[idx];
-    const distractors = pool
+    const idx = Math.floor(Math.random() * wordList.length);
+    const correct = wordList[idx];
+    const distractors = wordList
       .filter((_, i) => i !== idx)
       .sort(() => Math.random() - 0.5)
       .slice(0, 3);
@@ -977,30 +1162,101 @@ export default function FrenchLearner() {
 
   function handleQuizAnswer(opt) {
     if (quizAnswer) return;
+    bumpStreak();
     setQuizAnswer(opt);
-    if (opt[0] === quizQ[0]) {
-      setQuizScore((s) => ({ ...s, correct: s.correct + 1 }));
-    } else {
-      setQuizScore((s) => ({ ...s, wrong: s.wrong + 1 }));
-    }
+    const correct = opt[0] === quizQ[0];
+    setSessionQuiz((s) => ({
+      ...s,
+      correct: s.correct + (correct ? 1 : 0),
+      wrong: s.wrong + (correct ? 0 : 1),
+    }));
+    setQuizScores((prev) => {
+      const cur = prev[topic] ?? { correct: 0, wrong: 0 };
+      return {
+        ...prev,
+        [topic]: {
+          correct: cur.correct + (correct ? 1 : 0),
+          wrong: cur.wrong + (correct ? 0 : 1),
+        },
+      };
+    });
   }
 
+  // ── Flashcard ──
   function nextCard(result) {
-    if (result === 'knew') setKnown((s) => new Set([...s, cardIndex]));
-    else setUnknown((s) => new Set([...s, cardIndex]));
+    bumpStreak();
+    if (result === 'knew') setSessionKnown((s) => new Set([...s, cardIndex]));
+    else setSessionUnknown((s) => new Set([...s, cardIndex]));
     setFlipped(false);
     setTimeout(() => setCardIndex((i) => i + 1), 120);
   }
 
-  const total = quizScore.correct + quizScore.wrong;
-  const accuracy =
-    total > 0 ? Math.round((quizScore.correct / total) * 100) : 0;
+  function finishRound() {
+    // Merge session results into persisted progress
+    const newKnown = [...new Set([...topicProgress.known, ...sessionKnown])];
+    const newUnknown = [...sessionUnknown].filter((i) => !sessionKnown.has(i));
+    setProgress((prev) => ({
+      ...prev,
+      [topic]: {
+        known: newKnown,
+        unknown: newUnknown,
+        completedAt: todayStr(),
+      },
+    }));
+    setRoundsDone((r) => r + 1);
+  }
+
+  function resetTopicProgress() {
+    setProgress((prev) => ({
+      ...prev,
+      [topic]: { known: [], unknown: [], completedAt: null },
+    }));
+    setQuizScores((prev) => ({ ...prev, [topic]: { correct: 0, wrong: 0 } }));
+    setCardIndex(0);
+    setFlipped(false);
+    setSessionKnown(new Set());
+    setSessionUnknown(new Set());
+    setSessionQuiz({ correct: 0, wrong: 0 });
+  }
+
+  function resetAll() {
+    if (!window.confirm('Reset ALL progress? This cannot be undone.')) return;
+    [
+      'bc_tab',
+      'bc_topic',
+      'bc_mode',
+      'bc_tense',
+      'bc_progress',
+      'bc_quiz_scores',
+      'bc_tenses_studied',
+      'bc_streak',
+      'bc_rounds_done',
+    ].forEach((k) => localStorage.removeItem(k));
+    window.location.reload();
+  }
+
+  // Derived
+  const sessionTotal = sessionQuiz.correct + sessionQuiz.wrong;
+  const sessionAcc =
+    sessionTotal > 0
+      ? Math.round((sessionQuiz.correct / sessionTotal) * 100)
+      : 0;
+  const allTimeTotal = quizScore.correct + quizScore.wrong;
+  const allTimeAcc =
+    allTimeTotal > 0 ? Math.round((quizScore.correct / allTimeTotal) * 100) : 0;
   const currentTense = TENSES[tense];
+  const globalKnown = totalKnownAcrossTopics(progress);
+  const globalTotal = totalWordsAcrossTopics();
+  const globalPct = Math.round((globalKnown / globalTotal) * 100);
+
+  // List mode: highlight known words
+  const savedKnownSet = new Set(topicProgress.known);
 
   return (
     <>
       <style>{css}</style>
       <div className="app">
+        {/* ── HEADER ── */}
         <header className="header">
           <div className="header-brand">
             <h1>Bonne Chance!</h1>
@@ -1019,26 +1275,158 @@ export default function FrenchLearner() {
             >
               ✏️ Grammaire
             </button>
+            <button
+              className={`nav-btn ${showStats ? 'active' : ''}`}
+              onClick={() => setShowStats((s) => !s)}
+            >
+              📊 Progrès
+            </button>
           </nav>
         </header>
 
+        {/* ── STATS PANEL ── */}
+        {showStats && (
+          <div className="stats-panel">
+            <div className="stats-inner">
+              <div className="stats-row">
+                <div className="stat-block">
+                  <div className="stat-num">{globalKnown}</div>
+                  <div className="stat-label">Mots connus</div>
+                  <div className="stat-sub">sur {globalTotal} au total</div>
+                  <div className="stat-bar">
+                    <div
+                      className="stat-fill"
+                      style={{
+                        width: `${globalPct}%`,
+                        background: 'var(--sage)',
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="stat-block">
+                  <div className="stat-num">{streak.count}</div>
+                  <div className="stat-label">🔥 Jours d'affilée</div>
+                  <div className="stat-sub">
+                    {streak.lastDate === todayStr()
+                      ? "Étudié aujourd'hui ✓"
+                      : "Pas encore étudié aujourd'hui"}
+                  </div>
+                </div>
+                <div className="stat-block">
+                  <div className="stat-num">
+                    {tensesStudied.length}
+                    <span style={{ fontSize: 16 }}>/7</span>
+                  </div>
+                  <div className="stat-label">Temps étudiés</div>
+                  <div className="stat-sub">
+                    {tensesStudied.length === 7
+                      ? 'Tous révisés ! 🎓'
+                      : `${7 - tensesStudied.length} restant(s)`}
+                  </div>
+                </div>
+                <div className="stat-block">
+                  <div className="stat-num">{roundsDone}</div>
+                  <div className="stat-label">Sessions complètes</div>
+                  <div className="stat-sub">flashcards terminées</div>
+                </div>
+              </div>
+
+              <div className="stats-topics-title">Progression par thème</div>
+              <div className="stats-topics-grid">
+                {Object.entries(VOCAB_TOPICS).map(([t, arr]) => {
+                  const p = progress[t] ?? { known: [], unknown: [] };
+                  const pct =
+                    arr.length > 0
+                      ? Math.round((p.known.length / arr.length) * 100)
+                      : 0;
+                  const qs = quizScores[t] ?? { correct: 0, wrong: 0 };
+                  const qTotal = qs.correct + qs.wrong;
+                  const qAcc =
+                    qTotal > 0 ? Math.round((qs.correct / qTotal) * 100) : null;
+                  return (
+                    <div
+                      key={t}
+                      className="stats-topic-row"
+                      onClick={() => {
+                        setTopic(t);
+                        setShowStats(false);
+                      }}
+                    >
+                      <div className="stp-name">{t}</div>
+                      <div className="stp-bar-wrap">
+                        <div className="stp-bar">
+                          <div
+                            className="stp-fill"
+                            style={{ width: `${pct}%` }}
+                          />
+                        </div>
+                        <span className="stp-pct">
+                          {p.known.length}/{arr.length}
+                        </span>
+                      </div>
+                      {qAcc !== null && (
+                        <div className="stp-quiz">
+                          Quiz: {qAcc}% ({qTotal})
+                        </div>
+                      )}
+                      {p.completedAt && (
+                        <div className="stp-date">✓ {p.completedAt}</div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
+                <button
+                  className="ctrl-btn"
+                  style={{ fontSize: 12 }}
+                  onClick={() => setShowStats(false)}
+                >
+                  Fermer
+                </button>
+                <button
+                  className="ctrl-btn"
+                  style={{
+                    fontSize: 12,
+                    background: '#FEE2E2',
+                    color: '#DC2626',
+                    border: '1px solid #FCA5A5',
+                  }}
+                  onClick={resetAll}
+                >
+                  🗑 Réinitialiser tout
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <main className="main">
+          {/* ── VOCAB TAB ── */}
           {tab === 'vocab' && (
             <>
               <p className="section-heading">Vocabulaire thématique</p>
               <h2 className="section-title">Apprenez les mots</h2>
 
-              {/* Topic pills */}
+              {/* Topic pills with progress */}
               <div className="topic-grid">
-                {Object.keys(VOCAB_TOPICS).map((t) => (
-                  <button
-                    key={t}
-                    className={`topic-pill ${topic === t ? 'active' : ''}`}
-                    onClick={() => setTopic(t)}
-                  >
-                    {t}
-                  </button>
-                ))}
+                {Object.entries(VOCAB_TOPICS).map(([t, arr]) => {
+                  const p = progress[t] ?? { known: [] };
+                  const pct = Math.round((p.known.length / arr.length) * 100);
+                  return (
+                    <button
+                      key={t}
+                      className={`topic-pill ${topic === t ? 'active' : ''}`}
+                      onClick={() => setTopic(t)}
+                    >
+                      {p.known.length > 0 && (
+                        <span className="pill-pct">{pct}%</span>
+                      )}
+                      {t}
+                    </button>
+                  );
+                })}
               </div>
 
               {/* Mode + progress */}
@@ -1057,14 +1445,26 @@ export default function FrenchLearner() {
                   </button>
                 ))}
                 <span className="progress-badge">
-                  {topic} · <b>{words.length}</b> mots
-                  {mode === 'quiz' && total > 0 && (
+                  <b style={{ color: 'var(--sage)' }}>
+                    {topicProgress.known.length}
+                  </b>
+                  /{words.length} connus
+                  {mode === 'quiz' && allTimeTotal > 0 && (
                     <>
                       {' '}
-                      · <b>{accuracy}%</b> correct
+                      · <b>{allTimeAcc}%</b> all-time
                     </>
                   )}
                 </span>
+                {topicProgress.completedAt && (
+                  <button
+                    className="reset-btn"
+                    onClick={resetTopicProgress}
+                    title="Reset this topic"
+                  >
+                    ↺
+                  </button>
+                )}
               </div>
 
               {/* FLASHCARD MODE */}
@@ -1072,11 +1472,29 @@ export default function FrenchLearner() {
                 <>
                   {cardIndex < words.length ? (
                     <div className="flashcard-container">
+                      {/* Mini progress bar */}
+                      <div className="fc-progress-wrap">
+                        <div className="fc-progress-bar">
+                          <div
+                            className="fc-progress-fill"
+                            style={{
+                              width: `${(cardIndex / words.length) * 100}%`,
+                            }}
+                          />
+                        </div>
+                        <span className="fc-progress-label">
+                          {cardIndex} / {words.length}
+                        </span>
+                      </div>
+
                       <div
                         className={`flashcard-inner ${flipped ? 'flipped' : ''}`}
                         onClick={() => setFlipped((f) => !f)}
                       >
                         <div className="flashcard-face flashcard-front">
+                          {savedKnownSet.has(cardIndex) && (
+                            <div className="known-badge">✓ Connu</div>
+                          )}
                           <div className="card-label">Français</div>
                           <div className="card-word">{words[cardIndex][0]}</div>
                           <div className="card-hint">
@@ -1096,9 +1514,15 @@ export default function FrenchLearner() {
                         >
                           ✗ À revoir
                         </button>
-                        <span className="card-counter">
-                          {cardIndex + 1} / {words.length}
-                        </span>
+                        <div className="session-mini">
+                          <span style={{ color: 'var(--sage)' }}>
+                            ✓ {sessionKnown.size}
+                          </span>
+                          {' · '}
+                          <span style={{ color: 'var(--bordeaux)' }}>
+                            ✗ {sessionUnknown.size}
+                          </span>
+                        </div>
                         <button
                           className="ctrl-btn knew"
                           onClick={() => nextCard('knew')}
@@ -1109,22 +1533,70 @@ export default function FrenchLearner() {
                     </div>
                   ) : (
                     <div className="completion">
-                      <div className="completion-emoji">🎉</div>
+                      <div className="completion-emoji">
+                        {sessionKnown.size === words.length ? '🏆' : '🎉'}
+                      </div>
                       <div className="completion-title">Terminé !</div>
                       <div className="completion-sub">
-                        ✅ Connu : {known.size} · 🔄 À revoir : {unknown.size}
+                        ✅ Connu : {sessionKnown.size} · 🔄 À revoir :{' '}
+                        {sessionUnknown.size}
                       </div>
-                      <button
-                        className="ctrl-btn"
-                        onClick={() => {
-                          setCardIndex(0);
-                          setFlipped(false);
-                          setKnown(new Set());
-                          setUnknown(new Set());
+                      {topicProgress.known.length > 0 && (
+                        <div className="completion-alltime">
+                          Cumulatif :{' '}
+                          <b>
+                            {
+                              [
+                                ...new Set([
+                                  ...topicProgress.known,
+                                  ...sessionKnown,
+                                ]),
+                              ].length
+                            }
+                          </b>{' '}
+                          / {words.length} mots maîtrisés
+                        </div>
+                      )}
+                      <div
+                        style={{
+                          display: 'flex',
+                          gap: 12,
+                          justifyContent: 'center',
+                          flexWrap: 'wrap',
                         }}
                       >
-                        Recommencer
-                      </button>
+                        <button
+                          className="ctrl-btn"
+                          onClick={() => {
+                            finishRound();
+                            setCardIndex(0);
+                            setFlipped(false);
+                            setSessionKnown(new Set());
+                            setSessionUnknown(new Set());
+                          }}
+                        >
+                          💾 Sauvegarder & Recommencer
+                        </button>
+                        {sessionUnknown.size > 0 && (
+                          <button
+                            className="ctrl-btn"
+                            style={{
+                              background: 'var(--bordeaux)',
+                              color: 'white',
+                            }}
+                            onClick={() => {
+                              finishRound();
+                              // Restart with only the unknown cards
+                              setCardIndex(0);
+                              setFlipped(false);
+                              setSessionKnown(new Set());
+                              setSessionUnknown(new Set());
+                            }}
+                          >
+                            🔄 Retravailler les {sessionUnknown.size} non sus
+                          </button>
+                        )}
+                      </div>
                     </div>
                   )}
                 </>
@@ -1134,7 +1606,13 @@ export default function FrenchLearner() {
               {mode === 'list' && (
                 <div className="vocab-list">
                   {words.map(([fr, en], i) => (
-                    <div key={i} className="vocab-item">
+                    <div
+                      key={i}
+                      className={`vocab-item ${savedKnownSet.has(i) ? 'vocab-known' : ''}`}
+                    >
+                      {savedKnownSet.has(i) && (
+                        <span className="vocab-check">✓</span>
+                      )}
                       <span className="vocab-fr">{fr}</span>
                       <span className="vocab-sep">→</span>
                       <span className="vocab-en">{en}</span>
@@ -1149,27 +1627,29 @@ export default function FrenchLearner() {
                   <div className="quiz-score">
                     <div className="score-item">
                       <div className="score-num" style={{ color: '#16A34A' }}>
-                        {quizScore.correct}
+                        {sessionQuiz.correct}
                       </div>
-                      <div className="score-label">Correct</div>
-                    </div>
-                    <div className="score-item">
-                      <div
-                        className="score-num"
-                        style={{ color: 'var(--bordeaux)' }}
-                      >
-                        {quizScore.wrong}
-                      </div>
-                      <div className="score-label">Wrong</div>
+                      <div className="score-label">Session</div>
                     </div>
                     <div className="score-item">
                       <div
                         className="score-num"
                         style={{ color: 'var(--gold)' }}
                       >
-                        {accuracy}%
+                        {sessionAcc}%
                       </div>
-                      <div className="score-label">Accuracy</div>
+                      <div className="score-label">Précision</div>
+                    </div>
+                    <div className="score-item">
+                      <div
+                        className="score-num"
+                        style={{ color: 'var(--ink-light)', fontSize: 22 }}
+                      >
+                        {allTimeAcc}%
+                      </div>
+                      <div className="score-label">
+                        All-time ({allTimeTotal})
+                      </div>
                     </div>
                   </div>
                   <div className="quiz-card">
@@ -1218,37 +1698,57 @@ export default function FrenchLearner() {
             </>
           )}
 
+          {/* ── GRAMMAR TAB ── */}
           {tab === 'grammar' && (
             <>
               <p className="section-heading">Les temps et les modes</p>
               <h2 className="section-title">Maîtrisez la grammaire</h2>
 
+              {tensesStudied.length > 0 && (
+                <div className="tense-progress-bar">
+                  <span>📖 {tensesStudied.length}/7 temps étudiés</span>
+                  <div className="tpb-track">
+                    <div
+                      className="tpb-fill"
+                      style={{ width: `${(tensesStudied.length / 7) * 100}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+
               {/* Tense selector */}
               <div className="tense-grid">
-                {Object.entries(TENSES).map(([name, data]) => (
-                  <button
-                    key={name}
-                    className={`tense-pill ${tense === name ? 'active' : ''}`}
-                    style={
-                      tense === name
-                        ? {
-                            background: data.color,
-                            boxShadow: `0 4px 16px ${data.color}55`,
-                          }
-                        : {}
-                    }
-                    onClick={() => setTense(name)}
-                  >
-                    <span>{data.icon}</span> {name}
-                  </button>
-                ))}
+                {Object.entries(TENSES).map(([name, data]) => {
+                  const studied = tensesStudied.includes(name);
+                  return (
+                    <button
+                      key={name}
+                      className={`tense-pill ${tense === name ? 'active' : ''}`}
+                      style={
+                        tense === name
+                          ? {
+                              background: data.color,
+                              boxShadow: `0 4px 16px ${data.color}55`,
+                            }
+                          : {}
+                      }
+                      onClick={() => setTense(name)}
+                    >
+                      <span>{data.icon}</span>
+                      {name}
+                      {studied && tense !== name && (
+                        <span className="studied-check">✓</span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
 
               {/* Tense detail card */}
               <div className="tense-card" key={tense}>
                 <div className="tense-header">
                   <div className="tense-icon">{currentTense.icon}</div>
-                  <div>
+                  <div style={{ flex: 1 }}>
                     <div
                       className="tense-title"
                       style={{ color: currentTense.color }}
@@ -1257,6 +1757,9 @@ export default function FrenchLearner() {
                     </div>
                     <div className="tense-desc">{currentTense.description}</div>
                   </div>
+                  {tensesStudied.includes(tense) && (
+                    <div className="tense-studied-badge">✓ Étudié</div>
+                  )}
                 </div>
 
                 <div className="tense-body">
