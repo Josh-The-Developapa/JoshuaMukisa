@@ -5,6 +5,7 @@ import './index.css';
 import Home from './pages/Home/Home';
 import ValentinesForMonica from './pages/Valentines/Valentines';
 import RebuiltInGold from './pages/Sorry/Sorry';
+import FrenchLearner from './pages/French/French';
 
 const router = createBrowserRouter([
   {
@@ -17,8 +18,8 @@ const router = createBrowserRouter([
   // },
 
   {
-    path: '/sorry',
-    element: <RebuiltInGold />,
+    path: '/french',
+    element: <FrenchLearner />,
   },
 ]);
 
