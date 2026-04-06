@@ -32,7 +32,7 @@ import Pic29 from '../../assets/pic-29.jpg';
 import Pic30 from '../../assets/pic-30.jpg';
 import Pic31 from '../../assets/pic-31.jpg';
 import Pic32 from '../../assets/pic-32.jpg';
-import Pic33 from '../../assets/pic-40.png';
+import Pic33 from '../../assets/pic-40.jpg';
 import Pic34 from '../../assets/pic-34.jpg';
 import Pic35 from '../../assets/pic-35.jpg';
 import Pic36 from '../../assets/pic-50.jpg';
