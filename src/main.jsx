@@ -6,11 +6,16 @@ import Home from './pages/Home/Home';
 import ValentinesForMonica from './pages/Valentines/Valentines';
 import RebuiltInGold from './pages/Sorry/Sorry';
 import FrenchLearner from './pages/French/French';
+import BirthdayForMonica from './pages/Birthday/Birthday';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <Home />,
+  },
+  {
+    path: '/monica-17-bday',
+    element: <BirthdayForMonica />,
   },
   // {
   //   path: '/josh-and-mon',

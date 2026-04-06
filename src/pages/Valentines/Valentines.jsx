@@ -61,7 +61,7 @@ function MobileCarousel({ images, intervalMs = 4000 }) {
     clearInterval(timerRef.current);
     timerRef.current = setInterval(
       () => setPage(([c]) => [(c + 1) % count, 1]),
-      intervalMs
+      intervalMs,
     );
   };
   useEffect(() => {
@@ -233,7 +233,7 @@ export default function ValentinesForMonica() {
           if (entry.isIntersecting)
             setIsVisible((prev) => ({ ...prev, [entry.target.id]: true }));
         }),
-      { threshold: 0.15 }
+      { threshold: 0.15 },
     );
     document
       .querySelectorAll('[data-animate]')
