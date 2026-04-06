@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
 import emailjs from 'emailjs-com';
 
 // Asset imports — profile pic picked from masonry set
