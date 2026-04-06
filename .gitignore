@@ -1,4 +1,4 @@
-# Logs
+git commit -m "Remove assets folder from repo"# Logs
 logs
 *.log
 npm-debug.log*
