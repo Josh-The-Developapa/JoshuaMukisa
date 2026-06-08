@@ -5,6 +5,7 @@ import './index.css';
 import Home from './pages/Home/Home';
 import FrenchLearner from './pages/French/French';
 import BirthdayForMonica from './pages/Birthday/Birthday';
+import Resume from './pages/Resume/Resume';
 
 const router = createBrowserRouter([
   {
@@ -12,9 +13,10 @@ const router = createBrowserRouter([
     element: <Home />,
   },
   {
-    path: '/monica-17-bday',
-    element: <BirthdayForMonica />,
+    path: '/resume',
+    element: <Resume />,
   },
+
   // {
   //   path: '/josh-and-mon',
   //   element: <ValentinesForMonica />,

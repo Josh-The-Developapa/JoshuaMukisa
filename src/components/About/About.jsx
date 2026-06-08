@@ -64,7 +64,7 @@ const aboutConfig = {
     },
     {
       name: 'Resume',
-      url: '/joshua-mukisa-resume.pdf',
+      url: '/resume',
       icon: 'fas fa-file-alt',
     },
   ],

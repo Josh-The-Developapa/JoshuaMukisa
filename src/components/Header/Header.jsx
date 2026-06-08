@@ -28,7 +28,7 @@ const Header = ({ activeLink, onNavLinkClick }) => {
   };
 
   const handleResumeClick = () => {
-    window.open('/joshua-mukisa-resume.pdf', '_blank');
+    window.open('/resume', '_blank');
     setMobileMenuOpen(false); // Close mobile menu on resume click
   };
 
