@@ -24,10 +24,11 @@ const experienceConfig = {
       logoAlt: 'Videra Logo',
       showInShowcase: false, // Control showcase visibility per experience
       achievements: [
-        'Co-founded Videra Digital, a SaaS company focused on building scalable data management ecosystems.',
-        'Led frontend engineering across Videra products, translating UI/UX designs into performant, responsive, production-ready interfaces',
-        'Spearheaded the development of Cadera, a School Information System used by real institutions to manage grading, reporting, and academic workflows',
-        'Collaborated cross-functionally on product direction, system architecture, and long-term technical strategy as a co-founder',
+        'Serve as Lead Frontend Engineer and Head of Operations; manage a team of 2 developers, 1 UI/UX designer, and a Head of Finance as full-time university students, establishing contribution structures and workflows that keep the team shipping consistently.',
+        'Architect and maintain the entire frontend codebase across all Videra products, ensuring pixel-perfect, fully responsive implementations across devices.',
+        'When the backend engineer stepped down, independently learned NestJS, Prisma, and Supabase within two weeks to ship a critical feature on schedule and meet a client commitment without delay.',
+        'Drive all product direction, technical strategy, and company roadmap as a co-founder alongside engineering responsibilities.',
+        'Own all marketing and public-facing communications across LinkedIn and Instagram, building brand presence from the ground up.',
       ],
     },
     {
@@ -40,12 +41,10 @@ const experienceConfig = {
       logoAlt: 'VoteAble Logo',
       showInShowcase: false, // Control showcase visibility per experience
       achievements: [
-        "Founded and led a full-stack e-voting platform for Ugandan schools' student council elections",
-        "Architected and developed VoteAble's core codebase as the principal software engineer",
-        'Managed daily operations and coordinated a team of classmates to drive product development and launch',
-        'Successfully launched the platform at Aga Khan High School Kampala in 2022, with plans to expand to other schools',
-        'Monetized the platform through a subscription-based service, creating a sustainable revenue model',
-        'Gained hands-on experience in project management, team leadership, and stakeholder collaboration',
+        'Built and launched a full-stack multi-tenant e-voting platform that replaced a legacy system at Aga Khan High School Kampala, part of the global Aga Khan Education Services network, and has run every student council election without issue since 2022.',
+        "Compressed the school's election cycle from one month to one week by centralising candidate vetting, voting, and real-time results in one platform",
+        'Engineered secure authentication, dynamic subdomain routing, school-scoped data isolation, real-time vote tallying, and granular role-based admin dashboards.',
+        'Platform draws 2,000+ monthly visits during election season; pursuing annual school subscriptions as a monetisation model.',
       ],
     },
     {
@@ -307,12 +306,12 @@ const CompanyShowcase = ({
 }) => {
   // Filter experiences that should be shown in showcase
   const showcaseExperiences = experiences.filter(
-    (exp) => exp.logo && exp.showInShowcase !== false
+    (exp) => exp.logo && exp.showInShowcase !== false,
   );
 
   // Filter additional clients that should be shown
   const showcaseClients = additionalClients.filter(
-    (client) => client.logo && client.showInShowcase !== false
+    (client) => client.logo && client.showInShowcase !== false,
   );
 
   // Combine filtered companies
@@ -423,8 +422,8 @@ const ExperienceSection = ({
           cardLayout === 'compact'
             ? 'p-3 sm:p-4'
             : cardLayout === 'detailed'
-            ? 'p-6 sm:p-8'
-            : ''
+              ? 'p-6 sm:p-8'
+              : ''
         }
       />
     ));

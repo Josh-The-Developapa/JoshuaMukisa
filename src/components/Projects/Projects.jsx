@@ -50,7 +50,8 @@ const projectsConfig = {
         },
       ],
       image: CaderaImg,
-      statusText: 'Coming Out in 2026',
+      statusText: '',
+      liveUrl: 'https://cadera.app',
     },
     {
       title: 'CImage AI',
@@ -269,8 +270,8 @@ export default function ProjectsSection({
                   viewAllButtonVariant === 'solid'
                     ? 'bg-blue-500 text-white hover:bg-blue-600 hover:shadow-lg transform hover:-translate-y-0.5'
                     : viewAllButtonVariant === 'ghost'
-                    ? 'text-blue-500 hover:text-blue-700 hover:bg-blue-50 border border-transparent hover:border-blue-200'
-                    : 'border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 hover:shadow-md'
+                      ? 'text-blue-500 hover:text-blue-700 hover:bg-blue-50 border border-transparent hover:border-blue-200'
+                      : 'border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 hover:shadow-md'
                 }
               `}
             >
