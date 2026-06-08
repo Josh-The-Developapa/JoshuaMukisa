@@ -6,3 +6,4 @@ function Resume() {
 }
 
 export default Resume;
+// Updated Resume functionality to use a URL endpoint instead of just serving through public folder
