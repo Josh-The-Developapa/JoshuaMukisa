@@ -15,7 +15,7 @@ const experienceConfig = {
   subtitle: '',
   experiences: [
     {
-      title: 'Co-Founder',
+      title: 'Co-Founder and Director',
       company: 'Videra Digital',
       period: 'May 2025 - Present',
       location: '',

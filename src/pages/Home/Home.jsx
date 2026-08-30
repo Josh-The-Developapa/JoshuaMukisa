@@ -292,14 +292,14 @@ const Home = () => {
                 Hi, I'm <span className="gradient-text">Joshua Mukisa</span>
               </h1>
               <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-[30px] font-semibold text-gray-600 mb-6">
-                Software Developer
+                {/* Software Engineer */}
               </h2>
               <p className="text-base sm:text-lg md:text-[18px] text-gray-500 mb-8 font-[400] leading-relaxed text-justify">
-                I'm a software developer with over half a decade in experience
+                I'm a software engineer with over half a decade in experience
                 building full-stack apps, AI/ML systems, and real-world IoT
                 solutions. I'm driven by the desire to inspire a generation of
                 Africans to rise, lead, and redefine the global tech space.
-                Wakanda is the goal!
+                {/* Wakanda is the goal! */}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link

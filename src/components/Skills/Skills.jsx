@@ -27,11 +27,25 @@ const skillsConfig = {
       iconColor: 'text-gray-700',
     },
     {
+      name: 'NestJS',
+      level: 'Advanced',
+      icon: 'fas fa-cube',
+      iconBg: 'bg-red-50',
+      iconColor: 'text-red-600',
+    },
+    {
       name: 'MongoDB',
       level: 'Advanced',
       icon: 'fas fa-database',
       iconBg: 'bg-green-50',
       iconColor: 'text-green-700',
+    },
+    {
+      name: 'PostgreSQL',
+      level: 'Advanced',
+      icon: 'fas fa-database',
+      iconBg: 'bg-blue-50',
+      iconColor: 'text-blue-700',
     },
     {
       name: 'JavaScript',
@@ -70,6 +84,11 @@ const skillsConfig = {
     },
   ],
   additionalSkills: [
+    'Prisma',
+    'Supabase',
+    'Tailwind CSS',
+    'Material UI',
+    'Bootstrap',
     'Microsoft Excel',
     'Microsoft Word',
     'Microsoft PowerPoint',
@@ -210,7 +229,7 @@ const SkillsSection = ({
         </div>
 
         {/* Skills Summary for Large Screens */}
-        <div className="hidden xl:block mt-12">
+        {/* <div className="hidden xl:block mt-12">
           <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-8 rounded-2xl">
             <div className="text-center">
               <h4 className="text-xl font-semibold mb-4">Skills Overview</h4>
@@ -240,7 +259,7 @@ const SkillsSection = ({
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </section>
   );
