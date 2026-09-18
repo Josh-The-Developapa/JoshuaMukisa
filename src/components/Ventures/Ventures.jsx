@@ -20,19 +20,18 @@ const SpecRow = ({ label, value }) => (
 );
 
 const CasePlate = ({ image, alt }) => (
-  <div className="w-full border border-[#181614] bg-white p-2">
-    <div className="flex aspect-[16/10] items-center justify-center overflow-hidden bg-[#181614]">
+  <div className="w-full  bg-white">
+    <div className="flex items-center justify-center">
       {image ? (
         <img
-          data-case-img
           src={image}
           alt={alt}
           loading="lazy"
           decoding="async"
-          className="h-full w-full object-cover"
+          className="h-auto w-full"
         />
       ) : (
-        <span className="font-[JetBrains_Mono] text-[11px] uppercase tracking-[0.1em] text-[#F5F2EB]/40">
+        <span className="p-6 font-[JetBrains_Mono] text-[11px] uppercase tracking-[0.1em] text-[#181614]/30">
           {alt}
         </span>
       )}
@@ -89,7 +88,7 @@ const CaseStudy = ({
             className="inline-flex items-center gap-2 bg-[#181614] px-5 py-2.5 font-[JetBrains_Mono] text-[11px] uppercase tracking-[0.08em] text-[#F5F2EB] transition-colors duration-200 hover:bg-[#302D2A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D97746]"
           >
             {primaryAction.text}
-            <ArrowIcon />
+            {/* <ArrowIcon /> */}
           </a>
         )}
         {secondaryAction && secondaryAction.href ? (
@@ -99,7 +98,7 @@ const CaseStudy = ({
             className="inline-flex items-center gap-2 border border-[#181614] px-5 py-2.5 font-[JetBrains_Mono] text-[11px] uppercase tracking-[0.08em] text-[#181614] transition-colors duration-200 hover:bg-[#181614] hover:text-[#F5F2EB]"
           >
             {secondaryAction.text}
-            <ArrowIcon />
+            {/* <ArrowIcon /> */}
           </a>
         ) : secondaryAction ? (
           <span className="font-[JetBrains_Mono] text-[11px] uppercase tracking-[0.08em] text-[#706D66]">
@@ -110,7 +109,7 @@ const CaseStudy = ({
     </div>
 
     <div
-      className={`flex items-center bg-[#EFECE4] p-[clamp(2rem,4vw,3rem)] ${
+      className={`flex items-center bg-[#EFECE4] p-4 sm:p-8 lg:p-[clamp(2rem,4vw,3rem)] ${
         reverse
           ? 'border-[#DDD8CC] lg:order-1 lg:border-r'
           : 'border-[#DDD8CC] lg:border-l'
@@ -136,16 +135,15 @@ const MiniCase = ({ eyebrow, title, description, image, link }) => (
         </p>
       </div>
 
-      <div className="border border-[#181614] bg-[#EFECE4] p-2">
-        <div className="flex aspect-[16/10] items-center justify-center overflow-hidden bg-white">
+      <div className=" bg-[#EFECE4] p-2">
+        <div className="flex items-center justify-center">
           {image ? (
             <img
-              data-case-img
               src={image}
               alt={title}
               loading="lazy"
               decoding="async"
-              className="h-full w-full object-cover"
+              className="h-auto w-full"
             />
           ) : (
             <span className="font-[JetBrains_Mono] text-[11px] uppercase tracking-[0.1em] text-[#181614]/30">
@@ -171,7 +169,7 @@ const MiniCase = ({ eyebrow, title, description, image, link }) => (
         className="inline-flex items-center gap-1.5 font-[JetBrains_Mono] text-[11px] uppercase tracking-[0.05em] text-[#D97746] transition-colors duration-200 hover:text-[#181614]"
       >
         {link.text}
-        <ArrowIcon className="h-2 w-2" />
+        {/* <ArrowIcon className="h-2 w-2" /> */}
       </a>
     </div>
   </article>
@@ -180,9 +178,9 @@ const MiniCase = ({ eyebrow, title, description, image, link }) => (
 /**
  * Ventures
  *
- * Choreography: the section rule wipes in, each case study rises once,
- * and the screenshots inside the plates drift on a scrub. The drift is
- * the reason the plate images are held at scale 1.08 — it hides the edges.
+ * Choreography: the section rule wipes in, each case study rises once
+ * as it enters the viewport. Screenshots render at their natural aspect
+ * ratio, scaled to the width of their plate — nothing is cropped.
  */
 const Ventures = ({ sectionRef }) => {
   const rootRef = useRef(null);
@@ -217,24 +215,6 @@ const Ventures = ({ sectionRef }) => {
           duration: 0.9,
           scrollTrigger: { trigger: card, start: 'top 84%', once: true },
         });
-      });
-
-      q('[data-case-img]').forEach((img) => {
-        gsap.fromTo(
-          img,
-          { yPercent: -4, scale: 1.08 },
-          {
-            yPercent: 4,
-            scale: 1.08,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: img.closest('[data-case], [data-mini]'),
-              start: 'top bottom',
-              end: 'bottom top',
-              scrub: true,
-            },
-          },
-        );
       });
     }, root);
 
@@ -285,7 +265,7 @@ const Ventures = ({ sectionRef }) => {
               },
               {
                 label: 'DEPLOYMENT',
-                value: 'Makarios Junior School',
+                value: 'Makarios School',
               },
             ]}
             image={CaderaImg}
@@ -314,7 +294,7 @@ const Ventures = ({ sectionRef }) => {
               },
               {
                 label: 'DEPLOYED',
-                value: 'Aga Khan High School, since 2022',
+                value: 'Aga Khan High School, Makarios School',
               },
               {
                 label: 'SCOPE',
@@ -327,7 +307,7 @@ const Ventures = ({ sectionRef }) => {
               href: 'https://voteable.live',
             }}
             secondaryAction={{
-              text: 'In Production — Aga Khan High School',
+              text: 'In Production — Aga Khan High School, Makarios School',
             }}
           />
         </div>

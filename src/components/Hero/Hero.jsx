@@ -111,7 +111,7 @@ const Hero = ({ onNavLinkClick, portraitSrc = PORTRAIT_SRC }) => {
               className="inline-flex items-center justify-center gap-3 bg-[#181614] px-6 py-3.5 font-[JetBrains_Mono] text-[12px] uppercase tracking-[0.1em] text-[#F5F2EB] transition-colors duration-200 hover:bg-[#302D2A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D97746]"
             >
               Explore My Work
-              <ArrowIcon />
+              {/* <ArrowIcon /> */}
             </a>
             <a
               data-hero-cta
@@ -120,7 +120,7 @@ const Hero = ({ onNavLinkClick, portraitSrc = PORTRAIT_SRC }) => {
               className="inline-flex items-center justify-center gap-3 border border-[#181614] px-6 py-3.5 font-[JetBrains_Mono] text-[12px] uppercase tracking-[0.1em] text-[#181614] transition-colors duration-200 hover:bg-[#181614] hover:text-[#F5F2EB] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D97746]"
             >
               My Story
-              <ArrowIcon />
+              {/* <ArrowIcon /> */}
             </a>
           </div>
         </div>

@@ -83,7 +83,6 @@ const Home = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
 
-  const progressRef = useRef(null);
   const { scrollTo } = useSmoothScroll();
 
   useEffect(() => {
@@ -93,7 +92,7 @@ const Home = () => {
   }, []);
 
   /**
-   * Active nav link + reading progress.
+   * Active nav link tracking.
    *
    * Replaces the old scroll listener: that recalculated offsetTop for every
    * section on every scroll event, which thrashes layout. ScrollTrigger
@@ -114,18 +113,6 @@ const Home = () => {
           },
         });
       });
-
-      if (progressRef.current) {
-        gsap.fromTo(
-          progressRef.current,
-          { scaleX: 0 },
-          {
-            scaleX: 1,
-            ease: 'none',
-            scrollTrigger: { start: 0, end: 'max', scrub: 0.3 },
-          },
-        );
-      }
     });
 
     return () => ctx.revert();
@@ -172,13 +159,6 @@ const Home = () => {
 
   return (
     <div className="bg-[#F5F2EB] text-[#181614]">
-      {/* Reading progress. Move to `bottom-0` if it fights your header. */}
-      <div
-        ref={progressRef}
-        aria-hidden="true"
-        className="pointer-events-none fixed left-0 top-0 z-[70] h-[2px] w-full origin-left scale-x-0 bg-[#D97746]"
-      />
-
       <Header activeLink={activeLink} onNavLinkClick={handleNavLinkClick} />
 
       <SuccessToast

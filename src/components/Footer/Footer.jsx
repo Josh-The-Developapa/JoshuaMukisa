@@ -11,10 +11,11 @@ const indexRegister = [
 ];
 
 const externalWires = [
-  { label: 'GitHub', href: 'https://github.com/Josh-The-Developapa' },
-  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/joshua-mukisa/' },
   { label: 'Instagram', href: 'https://www.instagram.com/jmuks_k/' },
-  { label: 'Website', href: 'https://joshuamukisa.com' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/joshua-mukisa/' },
+  { label: 'GitHub', href: 'https://github.com/Josh-The-Developapa' },
+
+  // { label: 'Website', href: 'https://joshuamukisa.com' },
 ];
 
 const Footer = () => {
@@ -96,7 +97,7 @@ const Footer = () => {
         </div>
 
         {/* Col 4: station time */}
-        <div className="bg-[#23201D] border border-[#302D2A] p-6 flex flex-col justify-between gap-6">
+        {/* <div className="bg-[#23201D] border border-[#302D2A] p-6 flex flex-col justify-between gap-6">
           <div className="flex flex-col gap-1">
             <p className="font-[JetBrains_Mono] text-[10px] uppercase tracking-[0.08em] text-[#D97746]">
               Station Time
@@ -114,13 +115,13 @@ const Footer = () => {
           >
             Contact
           </a>
-        </div>
+        </div> */}
       </div>
 
       {/* Bottom copyright */}
       <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12 py-6 border-t border-[#302D2A] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <p className="font-[JetBrains_Mono] text-[11px] uppercase text-[#E6C9A9]/60">
-          © {new Date().getFullYear()} Joshua Mukisa — All Rights Reserved
+          © {new Date().getFullYear()} Joshua Mukisa. All Rights Reserved
         </p>
         {/* <div className="flex items-center gap-4">
           <span className="font-[JetBrains_Mono] text-[11px] uppercase text-[#E6C9A9]/60">

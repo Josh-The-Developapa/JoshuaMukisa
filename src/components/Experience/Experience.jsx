@@ -1,54 +1,62 @@
 import React from 'react';
+
 import useScrollReveal from '../../hooks/useScrollReveal';
-import VideraLogo from '../../assets/Videra Logo.png';
+
+import CaderaLogo from '../../assets/Videra Logo.png';
 import VoteAbleLogo from '../../assets/VoteAble-Logo.jpg';
 import ElectoralComission from '../../assets/Electoral Comission.png';
 import UpLift from '../../assets/UpLift.jpg';
 
 const experiences = [
   {
-    title: 'Co-Founder',
-    company: 'Videra Digital',
+    title: 'Co-Founder & Director',
+    // company: 'Cadera Cloud Solutions Ltd',
+    company: 'Videra Digital Ltd',
     period: 'May 2025 — Present',
     location: 'Kampala, Uganda',
-    logo: VideraLogo,
-    logoAlt: 'Videra Digital logo',
+    logo: CaderaLogo,
+    logoAlt: 'Cadera Cloud Solutions logo',
     achievements: [
-      'Serve as Lead Frontend Engineer and Head of Operations; manage a team of 2 developers, 1 UI/UX designer, and a Head of Finance as full-time university students, establishing contribution structures and workflows that keep the team shipping consistently.',
-      'Architect and maintain the entire frontend codebase across all Videra products, ensuring pixel-perfect, fully responsive implementations across devices.',
-      'When the backend engineer stepped down, independently learned NestJS, Prisma, and Supabase within two weeks to ship a critical feature on schedule and meet a client commitment without delay.',
-      'Drive all product direction, technical strategy, and company roadmap as a co-founder alongside engineering responsibilities.',
+      'Lead the engineering side of Cadera, from designing and building the product to maintaining it as it is used by schools.',
+      'Build and maintain the frontend while also working across the backend and database when the problem requires it, using React, NestJS, Prisma, and Supabase.',
+      'Set the product direction with the founding team, deciding what we build, what we improve, and what we take to schools.',
+      'Run day-to-day operations with a small team of developers, design, and finance, putting the workflows and structure in place that keep the company moving.',
+      'Work directly with schools during onboarding and deployment, turning what administrators and teachers need into changes to the product.',
     ],
   },
+
   {
     title: 'CEO & Founder',
-    company: 'VoteAble Inc.',
+    company: 'VoteAble',
     period: 'July 2022 — Present',
     location: 'Kampala, Uganda',
     website: 'https://voteable.live',
     logo: VoteAbleLogo,
-    logoAlt: 'VoteAble Inc. logo',
+    logoAlt: 'VoteAble logo',
     achievements: [
-      'Built and launched a full-stack multi-tenant e-voting platform that replaced a legacy system at Aga Khan High School Kampala, part of the global Aga Khan Education Services network, and has run every student council election without issue since 2022.',
-      "Compressed the school's election cycle from one month to one week by centralising candidate vetting, voting, and real-time results in one platform.",
-      'Engineered secure authentication, dynamic subdomain routing, school-scoped data isolation, real-time vote tallying, and granular role-based admin dashboards.',
-      'Platform draws 2,000+ monthly visits during election season; pursuing annual school subscriptions as a monetisation model.',
+      'Built VoteAble from scratch after my school had to rerun a student council election, then took responsibility for running the elections myself while I was still a student.',
+      'Run the technical and operational side of school elections, working with administrators and student leaders from preparation and voter registration through voting and the release of results.',
+      'Build and maintain the platform behind the operation, including authentication, voter management, school-specific data, election administration, and real-time results.',
+      'Expanded VoteAble from its first deployment at Aga Khan High School to support elections at other schools, adapting the platform and the way elections are run as it grows.',
+      'After graduating, established a team within Aga Khan to continue running the elections without me being physically present, while I continue to oversee the platform and its operation.',
     ],
   },
+
   {
     title: 'Electoral Data & Logistics Intern',
     company: 'Electoral Commission of Uganda',
-    period: 'Jun 2022',
+    period: 'June 2022',
     location: 'Kampala, Uganda',
     website: 'https://ec.or.ug',
     logo: ElectoralComission,
     logoAlt: 'Electoral Commission of Uganda logo',
     achievements: [
-      'Organized and distributed voter registration books to district heads during electoral processes.',
-      'Supported election logistics and district coordination with administrative precision.',
-      'Conducted data analysis in Excel to extract and interpret key registration trends.',
+      'Supported the distribution and organization of voter registration materials across districts during an active electoral period.',
+      'Worked with electoral staff on logistics, district coordination, and the administrative work behind voter registration.',
+      'Used Excel to organize and analyse registration data and identify trends for electoral reporting.',
     ],
   },
+
   {
     title: 'Frontend Web Developer',
     company: 'UpLift Establishment Limited',
@@ -58,14 +66,12 @@ const experiences = [
     logo: UpLift,
     logoAlt: 'UpLift Establishment Limited logo',
     achievements: [
-      'Built and developed a dynamic website from the ground up.',
-      'Led UI revisions to improve user experience and interface design.',
-      'Collaborated with the team to integrate gallery images, enhancing visual appeal and site functionality.',
+      'Designed and built the company website from the ground up.',
+      'Worked on the interface and user experience, making revisions to the site as the company’s needs evolved.',
+      'Managed the integration and presentation of the company’s visual content, including its gallery.',
     ],
   },
 ];
-
-// Editorial-style logo mark: square, bordered, no rounding/gradients — matches JMMonogram treatment
 const CompanyLogo = ({ logo, logoAlt, company }) => {
   if (!logo) return null;
 
@@ -80,6 +86,7 @@ const CompanyLogo = ({ logo, logoAlt, company }) => {
           e.target.nextSibling.style.display = 'flex';
         }}
       />
+
       <div
         className="hidden w-full h-full bg-[#181614] text-[#F5F2EB] font-[Newsreader] text-[18px] items-center justify-center"
         style={{ display: 'none' }}
@@ -100,10 +107,12 @@ const ExperienceCard = ({ experience }) => (
             logoAlt={experience.logoAlt}
             company={experience.company}
           />
+
           <div className="flex flex-col">
             <h3 className="font-[Newsreader] text-[22px] sm:text-[26px] text-[#181614] leading-[1.15]">
               {experience.title}
             </h3>
+
             {experience.website ? (
               <a
                 href={experience.website}
@@ -120,9 +129,11 @@ const ExperienceCard = ({ experience }) => (
             )}
           </div>
         </div>
+
         <span className="font-[JetBrains_Mono] text-[11px] uppercase tracking-[0.05em] text-[#706D66] mt-2">
           {experience.period}
         </span>
+
         {experience.location && (
           <span className="font-[JetBrains_Mono] text-[11px] uppercase tracking-[0.05em] text-[#706D66]">
             {experience.location}

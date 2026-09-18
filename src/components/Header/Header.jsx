@@ -60,6 +60,25 @@ const ArrowIcon = ({ className = '' }) => (
   </svg>
 );
 
+// Simple download-tray icon to visually distinguish the resume link from the arrow CTA
+const DownloadIcon = ({ className = '' }) => (
+  <svg
+    className={className}
+    width="11"
+    height="11"
+    viewBox="0 0 11 11"
+    fill="none"
+    aria-hidden="true"
+  >
+    <path
+      d="M5.5 1V7.5M5.5 7.5L2.5 4.5M5.5 7.5L8.5 4.5M1 9.5H10"
+      stroke="currentColor"
+      strokeWidth="1.2"
+      strokeLinecap="square"
+    />
+  </svg>
+);
+
 const Header = ({ activeLink, onNavLinkClick }) => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -156,6 +175,11 @@ const Header = ({ activeLink, onNavLinkClick }) => {
     setMobileMenuOpen(false);
   };
 
+  const handleResumeClick = () => {
+    window.open('/resume', '_blank');
+    setMobileMenuOpen(false);
+  };
+
   return (
     <header
       ref={barRef}
@@ -200,15 +224,25 @@ const Header = ({ activeLink, onNavLinkClick }) => {
             ))}
           </nav>
 
-          {/* CTA */}
-          <a
-            href="#contact"
-            onClick={(e) => handleLinkClick(e, '#contact')}
-            className="hidden items-center gap-2 bg-[#181614] px-5 py-2.5 font-[JetBrains_Mono] text-[11px] uppercase tracking-[0.1em] text-[#F5F2EB] transition-colors duration-200 hover:bg-[#302D2A] lg:flex"
-          >
-            Get In Touch
-            <ArrowIcon />
-          </a>
+          {/* Resume + CTA */}
+          <div className="hidden items-center gap-3 lg:flex">
+            <button
+              type="button"
+              onClick={handleResumeClick}
+              className="flex cursor-pointer items-center gap-2 border border-[#181614]/30 px-4 py-2.5 font-[JetBrains_Mono] text-[11px] uppercase tracking-[0.1em] text-[#181614] transition-colors duration-200 hover:border-[#181614]"
+            >
+              Resume
+              {/* <DownloadIcon /> */}
+            </button>
+            <a
+              href="#contact"
+              onClick={(e) => handleLinkClick(e, '#contact')}
+              className="flex items-center gap-2 bg-[#181614] px-5 py-2.5 font-[JetBrains_Mono] text-[11px] uppercase tracking-[0.1em] text-[#F5F2EB] transition-colors duration-200 hover:bg-[#302D2A]"
+            >
+              Get In Touch
+              {/* <ArrowIcon /> */}
+            </a>
+          </div>
 
           {/* Mobile toggle */}
           <button
@@ -259,14 +293,23 @@ const Header = ({ activeLink, onNavLinkClick }) => {
               {link.text}
             </a>
           ))}
+          <button
+            data-menu-item
+            type="button"
+            onClick={handleResumeClick}
+            className="mt-4 flex cursor-pointer items-center justify-center gap-2 border border-[#181614] px-5 py-3 font-[JetBrains_Mono] text-[11px] uppercase tracking-[0.1em] text-[#181614]"
+          >
+            Resume
+            {/* <DownloadIcon /> */}
+          </button>
           <a
             data-menu-item
             href="#contact"
             onClick={(e) => handleLinkClick(e, '#contact')}
-            className="mt-4 flex items-center justify-center gap-2 bg-[#181614] px-5 py-3 font-[JetBrains_Mono] text-[11px] uppercase tracking-[0.1em] text-[#F5F2EB]"
+            className="mt-3 flex items-center justify-center gap-2 bg-[#181614] px-5 py-3 font-[JetBrains_Mono] text-[11px] uppercase tracking-[0.1em] text-[#F5F2EB]"
           >
             Get In Touch
-            <ArrowIcon />
+            {/* <ArrowIcon /> */}
           </a>
         </div>
       </div>
@@ -275,4 +318,4 @@ const Header = ({ activeLink, onNavLinkClick }) => {
 };
 
 export default Header;
-export { JMMonogram, ArrowIcon };
+export { JMMonogram, ArrowIcon, DownloadIcon };
