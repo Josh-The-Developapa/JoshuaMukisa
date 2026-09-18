@@ -1,7 +1,5 @@
-import React from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 
-// Adjust these relative to wherever you place this component —
-// matches the asset paths from your original HeroImageMasonry.jsx.
 import pic1 from '../../assets/pic-1.jpeg';
 import pic2 from '../../assets/pic-2.jpeg';
 import pic3 from '../../assets/pic-3.jpeg';
@@ -17,14 +15,17 @@ import pic12 from '../../assets/voteable-7.jpg';
 import pic13 from '../../assets/voteable-8.jpeg';
 import pic14 from '../../assets/voteable-9.jpg';
 
+import { gsap, ScrollTrigger, prefersReducedMotion } from '../../lib/gsap';
+
 /**
  * Civic Impact Gallery — Aga Khan High School Election Deployment
- * ------------------------------------------------------------------
- * Two horizontal rows of archival plates, each row scrolling in the
- * opposite direction. Cards keep each photo's native landscape ratio
- * instead of a tall crop, so nothing important gets cut off. On
- * hover, the plate turns white and reveals a short field note in
- * place of the photo.
+ *
+ * The marquee is now GSAP-driven instead of CSS keyframes, which buys
+ * three things the CSS version couldn't do:
+ *  - the rows speed up with your scroll velocity and settle back to
+ *    their cruise speed, so the gallery answers the scroll
+ *  - the tweens pause entirely when the section is off screen
+ *  - hover pauses smoothly rather than freezing mid-frame
  */
 
 const topRow = [
@@ -119,18 +120,18 @@ const bottomRow = [
 
 const Plate = ({ item }) => (
   <div
-    className={`relative flex-shrink-0 h-full ${item.ratio} bg-white border border-[#DDD8CC] p-1.5 group cursor-default`}
+    className={`group relative h-full flex-shrink-0 cursor-default border border-[#DDD8CC] bg-white p-1.5 ${item.ratio}`}
   >
-    <div className="relative w-full h-full overflow-hidden">
+    <div className="relative h-full w-full overflow-hidden">
       <img
         src={item.image}
         alt={item.alt}
-        className="w-full h-full object-cover grayscale-[25%] transition-opacity duration-500 group-hover:opacity-0"
         loading="lazy"
-        draggable={false}
+        decoding="async"
+        className="h-full w-full object-cover grayscale-[25%] transition-opacity duration-500 group-hover:opacity-0"
       />
       <div className="absolute inset-0 flex items-center justify-center bg-white px-5 text-center opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-        <p className="font-[Newsreader] font-light italic text-[15px] sm:text-[17px] leading-snug text-[#181614] max-w-[26ch]">
+        <p className="max-w-[26ch] font-[Newsreader] text-[15px] font-light italic leading-snug text-[#181614] sm:text-[17px]">
           {item.caption}
         </p>
       </div>
@@ -138,14 +139,15 @@ const Plate = ({ item }) => (
   </div>
 );
 
-const Row = ({ items, direction, speed }) => (
-  <div className="h-full overflow-hidden">
+const Row = ({ items, direction, duration }) => (
+  <div data-marquee-viewport className="h-full overflow-hidden">
     <div
-      className={`flex h-full gap-4 lg:gap-6 w-max will-change-transform ${
-        direction === 'left' ? 'animate-gallery-left' : 'animate-gallery-right'
-      }`}
-      style={{ animationDuration: speed }}
+      data-marquee
+      data-direction={direction}
+      data-duration={duration}
+      className="flex h-full w-max gap-4 lg:gap-6"
     >
+      {/* Tripled so a -33.333% shift loops seamlessly. */}
       {[...items, ...items, ...items].map((item, i) => (
         <Plate key={`${direction}-${i}`} item={item} />
       ))}
@@ -154,69 +156,136 @@ const Row = ({ items, direction, speed }) => (
 );
 
 const AgaKhanGallery = ({ sectionRef }) => {
+  const rootRef = useRef(null);
+
+  useLayoutEffect(() => {
+    const root = rootRef.current;
+    if (!root || prefersReducedMotion()) return;
+
+    const ctx = gsap.context((self) => {
+      const q = self.selector;
+
+      // Heading
+      gsap.from(q('[data-gallery-head] > *'), {
+        opacity: 0,
+        y: 24,
+        stagger: 0.12,
+        scrollTrigger: {
+          trigger: q('[data-gallery-head]')[0],
+          start: 'top 88%',
+          once: true,
+        },
+      });
+
+      // Marquee tracks
+      const tracks = q('[data-marquee]');
+      const loops = tracks.map((track) => {
+        const forward = track.dataset.direction !== 'right';
+        const duration = Number(track.dataset.duration) || 40;
+
+        gsap.set(track, { xPercent: forward ? 0 : -33.333 });
+
+        return gsap.to(track, {
+          xPercent: forward ? -33.333 : 0,
+          duration,
+          ease: 'none',
+          repeat: -1,
+        });
+      });
+
+      // Hover pause, per row.
+      const listeners = [];
+      q('[data-marquee-viewport]').forEach((viewport, i) => {
+        const loop = loops[i];
+        if (!loop) return;
+        const pause = () => gsap.to(loop, { timeScale: 0, duration: 0.4 });
+        const resume = () => gsap.to(loop, { timeScale: 1, duration: 0.6 });
+        viewport.addEventListener('mouseenter', pause);
+        viewport.addEventListener('mouseleave', resume);
+        listeners.push([viewport, pause, resume]);
+      });
+
+      // Only run while visible, and let scroll velocity drive the speed.
+      const boost = gsap.utils.clamp(1, 3.5);
+      let settle;
+
+      ScrollTrigger.create({
+        trigger: root,
+        start: 'top bottom',
+        end: 'bottom top',
+        onToggle: (st) =>
+          loops.forEach((loop) => (st.isActive ? loop.play() : loop.pause())),
+        onUpdate: (st) => {
+          const target = boost(1 + Math.abs(st.getVelocity()) / 1400);
+          loops.forEach((loop) =>
+            gsap.to(loop, {
+              timeScale: target,
+              duration: 0.2,
+              overwrite: true,
+            }),
+          );
+          settle?.kill();
+          settle = gsap.delayedCall(0.3, () => {
+            loops.forEach((loop) =>
+              gsap.to(loop, { timeScale: 1, duration: 0.9, overwrite: true }),
+            );
+          });
+        },
+      });
+
+      return () => {
+        settle?.kill();
+        listeners.forEach(([viewport, pause, resume]) => {
+          viewport.removeEventListener('mouseenter', pause);
+          viewport.removeEventListener('mouseleave', resume);
+        });
+      };
+    }, root);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
     <section
       id="gallery"
       ref={sectionRef}
-      className="py-16 sm:py-24 lg:py-28 border-b border-[#DDD8CC] bg-[#EFECE4]"
+      className="box-border w-full border-b border-[#DDD8CC] bg-[#EFECE4] py-[clamp(4rem,9vh,7rem)]"
     >
-      <div className="max-w-[1280px] mx-auto px-6 sm:px-8 lg:px-12 flex flex-col gap-6 mb-10 sm:mb-12">
-        <h2 className="font-[Newsreader] font-light text-[32px] sm:text-[44px] leading-[1.05] tracking-[-0.02em] text-[#181614] max-w-[680px]">
-          Gallery
-        </h2>
-        <div className="flex items-center gap-2 pt-3 border-t border-[#DDD8CC]">
-          {/* <span className="w-1.5 h-1.5 bg-[#706D66] flex-shrink-0" /> */}
-          <span className="font-[JetBrains_Mono] text-[11px] uppercase tracking-[0.06em] text-[#706D66]">
-            A record of my work with Aga Khan High School, from building
-            VoteAble
-            <br /> to taking the initiative to run its elections while I was
-            still a student.
-          </span>
-        </div>
-      </div>
-
-      <div className="relative w-full overflow-hidden border-y border-[#DDD8CC]">
-        <div className="flex flex-col gap-4 sm:gap-6 py-6 sm:py-8">
-          <div className="h-[180px] sm:h-[240px] lg:h-[300px]">
-            <Row items={topRow} direction="left" speed="38s" />
-          </div>
-          <div className="h-[180px] sm:h-[240px] lg:h-[300px]">
-            <Row items={bottomRow} direction="right" speed="44s" />
+      <div ref={rootRef}>
+        <div
+          data-gallery-head
+          className="mx-auto mb-[clamp(2.5rem,4vw,3rem)] flex w-full max-w-[1280px] flex-col gap-6 px-[clamp(1.5rem,5vw,3rem)]"
+        >
+          <h2 className="max-w-[680px] font-[Newsreader] text-[clamp(2rem,4.2vw,2.75rem)] font-light leading-[1.05] tracking-[-0.02em] text-[#181614]">
+            Gallery
+          </h2>
+          <div className="flex items-center gap-2 border-t border-[#DDD8CC] pt-3">
+            <span className="font-[JetBrains_Mono] text-[11px] uppercase tracking-[0.06em] text-[#706D66]">
+              A record of my work with Aga Khan High School, from building
+              VoteAble
+              <br /> to taking the initiative to run its elections while I was
+              still a student. <br />
+              Today, I oversee a team I established to carry the work forward in
+              my absence.
+            </span>
           </div>
         </div>
-      </div>
 
-      <style>{`
-        @keyframes gallery-left {
-          0% { transform: translate3d(0, 0, 0); }
-          100% { transform: translate3d(-33.3333%, 0, 0); }
-        }
-        @keyframes gallery-right {
-          0% { transform: translate3d(-33.3333%, 0, 0); }
-          100% { transform: translate3d(0, 0, 0); }
-        }
-        .animate-gallery-left {
-          animation-name: gallery-left;
-          animation-timing-function: linear;
-          animation-iteration-count: infinite;
-          backface-visibility: hidden;
-        }
-        .animate-gallery-right {
-          animation-name: gallery-right;
-          animation-timing-function: linear;
-          animation-iteration-count: infinite;
-          backface-visibility: hidden;
-        }
-        .animate-gallery-left:hover,
-        .animate-gallery-right:hover {
-          animation-play-state: paused;
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .animate-gallery-left, .animate-gallery-right {
-            animation: none;
-          }
-        }
-      `}</style>
+        <div className="relative w-full overflow-hidden border-y border-[#DDD8CC]">
+          <div className="flex flex-col gap-4 py-6 sm:gap-6 sm:py-8">
+            <div className="h-[180px] sm:h-[240px] lg:h-[300px]">
+              <Row items={topRow} direction="left" duration={38} />
+            </div>
+            <div className="h-[180px] sm:h-[240px] lg:h-[300px]">
+              <Row items={bottomRow} direction="right" duration={44} />
+            </div>
+          </div>
+
+          {/* Edge vignettes */}
+          {/* <div className="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-[#EFECE4] to-transparent sm:w-20" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-[#EFECE4] to-transparent sm:w-20" /> */}
+        </div>
+      </div>
     </section>
   );
 };

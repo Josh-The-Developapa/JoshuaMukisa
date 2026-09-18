@@ -1,6 +1,19 @@
 import React from 'react';
+import useScrollReveal from '../../hooks/useScrollReveal';
 
 const cells = [
+  {
+    title: 'Frontend & UI',
+    description:
+      'Component-driven interfaces built for craft as much as function, from layout systems to motion and interaction detail.',
+    rows: [
+      { label: 'React.js', value: 'Advanced' },
+      { label: 'Tailwind CSS', value: 'Advanced' },
+      { label: 'Material UI', value: 'Production' },
+      { label: 'Bootstrap', value: 'Production' },
+      { label: 'HTML / CSS', value: 'Advanced' },
+    ],
+  },
   {
     title: 'Systems & Backends',
     description:
@@ -28,8 +41,8 @@ const cells = [
     description:
       'Local machine learning deployed directly to client hardware to preserve privacy and bypass GPU server costs.',
     rows: [
-      { label: 'TensorFlow.js', value: 'Client Runtime' },
       { label: 'PyTorch / ResNet', value: 'Vision Modeling' },
+      { label: 'TensorFlow.js', value: 'Client Runtime' },
       { label: 'MobileNet', value: 'Edge Inference' },
       { label: 'NumPy / Pandas', value: 'Moderate' },
     ],
@@ -45,32 +58,26 @@ const cells = [
     ],
   },
   {
-    title: 'Tooling & Infrastructure',
+    title: 'Tooling & Workflow',
     description:
-      'Reproducible build pipelines, systems administration, and production-grade delivery workflows.',
+      'Reproducible build pipelines, interface prototyping, and production-grade delivery workflows.',
     rows: [
       { label: 'Git / GitHub', value: 'Daily' },
-      { label: 'VS Code', value: 'Fluent' },
       { label: 'Figma', value: 'Working' },
+      { label: 'VS Code', value: 'Fluent' },
       { label: 'Postman', value: 'Advanced' },
-    ],
-  },
-  {
-    title: 'Venture Leadership',
-    description:
-      'Translating institutional needs into technical roadmaps, shipping software, and coordinating teams.',
-    rows: [
-      { label: 'Co-Founding (Videra)', value: 'Ongoing' },
-      { label: 'Product Direction', value: 'Advanced' },
-      { label: 'Team Coordination', value: 'Applied' },
+      { label: 'Python', value: 'Moderate' },
     ],
   },
 ];
 
 const Cell = ({ cell }) => (
-  <div className="bg-white border border-[#DDD8CC] p-6 sm:p-8 flex flex-col justify-between gap-8 h-full">
+  <div
+    data-reveal
+    className="flex h-full flex-col justify-between gap-8 border border-[#DDD8CC] bg-white p-[clamp(1.5rem,3vw,2rem)]"
+  >
     <div className="flex flex-col gap-3">
-      <h3 className="font-[Newsreader] text-[22px] sm:text-[24px] text-[#181614]">
+      <h3 className="font-[Newsreader] text-[clamp(1.375rem,2vw,1.5rem)] text-[#181614]">
         {cell.title}
       </h3>
       <p className="font-[Plus_Jakarta_Sans] text-[12px] leading-[1.6] text-[#706D66]">
@@ -81,7 +88,7 @@ const Cell = ({ cell }) => (
       {cell.rows.map((row) => (
         <div
           key={row.label}
-          className="flex items-center justify-between py-1 border-b border-[#F5F2EB] last:border-b-0"
+          className="flex items-center justify-between border-b border-[#F5F2EB] py-1 last:border-b-0"
         >
           <span className="font-[JetBrains_Mono] text-[12px] text-[#181614]">
             {row.label}
@@ -95,21 +102,35 @@ const Cell = ({ cell }) => (
   </div>
 );
 
+/**
+ * Skills
+ *
+ * A six-up grid is where per-element animation gets noisy, so the reveal
+ * is batched: whatever row of cards enters together animates together.
+ */
 const Skills = ({ sectionRef }) => {
+  const scope = useScrollReveal({ y: 24, stagger: 0.07 });
+
   return (
     <section
       id="skills"
       ref={sectionRef}
-      className="py-16 sm:py-24 lg:py-28 px-6 sm:px-8 lg:px-12 border-b border-[#DDD8CC] bg-[#F5F2EB]"
+      className="box-border w-full overflow-x-clip border-b border-[#DDD8CC] bg-[#F5F2EB] px-[clamp(1.5rem,5vw,3rem)] py-[clamp(4rem,9vh,7rem)]"
     >
-      <div className="max-w-[1280px] mx-auto flex flex-col gap-12 sm:gap-16">
-        <div className="flex items-end justify-between gap-6 pb-6 border-b border-[#181614]">
-          <h2 className="font-[Newsreader] font-light text-[40px] sm:text-[52px] tracking-[-0.02em] text-[#181614]">
+      <div
+        ref={scope}
+        className="mx-auto flex w-full max-w-[1280px] flex-col gap-[clamp(2.5rem,4vw,3rem)]"
+      >
+        <div className="border-b border-[#181614] pb-6">
+          <h2
+            data-reveal
+            className="font-[Newsreader] text-[clamp(2.5rem,4.5vw,3.25rem)] font-light tracking-[-0.02em] text-[#181614]"
+          >
             Technical Skills
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+        <div className="grid grid-cols-1 gap-[clamp(1.5rem,3vw,2rem)] sm:grid-cols-2 lg:grid-cols-3">
           {cells.map((cell) => (
             <Cell key={cell.title} cell={cell} />
           ))}

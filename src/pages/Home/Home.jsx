@@ -1,5 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import emailjs from 'emailjs-com';
+
+import { gsap, ScrollTrigger, prefersReducedMotion } from '../../lib/gsap';
+import useSmoothScroll from '../../hooks/useSmoothScroll';
 
 import Header from '../../components/Header/Header';
 import Hero from '../../components/Hero/Hero';
@@ -12,28 +15,51 @@ import Blog from '../../components/Blog/Blog';
 import Contact from '../../components/Contact/Contact';
 import Footer from '../../components/Footer/Footer';
 
-/**
- * Adjust the import paths above to match wherever you place each
- * component in your project. Each section also expects these fonts
- * to be loaded globally — see the comment at the top of Header.jsx.
- */
+/** Section ids in document order — drives the active nav link. */
+const SECTION_IDS = [
+  'home',
+  'about',
+  'ventures',
+  'experience',
+  'gallery',
+  'skills',
+  'blog',
+  'contact',
+];
 
 // Small toast shown after a successful contact-form submission.
 const SuccessToast = ({ isVisible, onClose }) => {
+  const toastRef = useRef(null);
+
   useEffect(() => {
-    if (isVisible) {
-      const timer = setTimeout(onClose, 4000);
-      return () => clearTimeout(timer);
-    }
+    if (!isVisible) return;
+    const timer = setTimeout(onClose, 4000);
+    return () => clearTimeout(timer);
   }, [isVisible, onClose]);
+
+  useLayoutEffect(() => {
+    if (!isVisible || !toastRef.current || prefersReducedMotion()) return;
+    const tween = gsap.from(toastRef.current, {
+      xPercent: 110,
+      opacity: 0,
+      duration: 0.5,
+      ease: 'power3.out',
+    });
+    return () => tween.revert();
+  }, [isVisible]);
 
   if (!isVisible) return null;
 
   return (
-    <div className="fixed top-24 right-4 z-[60] animate-slide-in">
-      <div className="bg-[#181614] text-[#F5F2EB] px-6 py-4 border border-[#D97746] shadow-lg flex items-start gap-3 max-w-sm">
+    <div
+      ref={toastRef}
+      role="status"
+      aria-live="polite"
+      className="fixed right-4 top-24 z-[60]"
+    >
+      <div className="flex max-w-sm items-start gap-3 border border-[#D97746] bg-[#181614] px-6 py-4 text-[#F5F2EB] shadow-lg">
         <div className="flex-1">
-          <p className="font-[JetBrains_Mono] text-[12px] uppercase tracking-[0.06em] text-[#D97746] mb-1">
+          <p className="mb-1 font-[JetBrains_Mono] text-[12px] uppercase tracking-[0.06em] text-[#D97746]">
             Message Sent
           </p>
           <p className="font-[Plus_Jakarta_Sans] text-[13px] text-[#F5F2EB]/90">
@@ -57,70 +83,70 @@ const Home = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
 
-  const sectionRefs = {
-    home: useRef(null),
-    about: useRef(null),
-    ventures: useRef(null),
-    experience: useRef(null),
-    gallery: useRef(null),
-    skills: useRef(null),
-    blog: useRef(null),
-    contact: useRef(null),
-  };
+  const progressRef = useRef(null);
+  const { scrollTo } = useSmoothScroll();
 
   useEffect(() => {
     if (import.meta.env?.VITE_PUBLIC_KEY) {
       emailjs.init(import.meta.env.VITE_PUBLIC_KEY);
     }
-
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      let currentSection = 'home';
-
-      for (const [sectionName, ref] of Object.entries(sectionRefs)) {
-        const section = ref.current;
-        if (section) {
-          const sectionTop = section.offsetTop;
-          const sectionHeight = section.clientHeight;
-          if (
-            scrollPosition >= sectionTop - 120 &&
-            scrollPosition < sectionTop + sectionHeight - 120
-          ) {
-            currentSection = sectionName;
-          }
-        }
-      }
-      setActiveLink(currentSection);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Inject the slide-in keyframe used by the success toast once.
-  useEffect(() => {
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes slide-in {
-        from { transform: translateX(100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
+  /**
+   * Active nav link + reading progress.
+   *
+   * Replaces the old scroll listener: that recalculated offsetTop for every
+   * section on every scroll event, which thrashes layout. ScrollTrigger
+   * measures once and only reports when a section actually takes over.
+   */
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      SECTION_IDS.forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        ScrollTrigger.create({
+          trigger: el,
+          start: 'top 45%',
+          end: 'bottom 45%',
+          onToggle: (self) => {
+            if (self.isActive) setActiveLink(id);
+          },
+        });
+      });
+
+      if (progressRef.current) {
+        gsap.fromTo(
+          progressRef.current,
+          { scaleX: 0 },
+          {
+            scaleX: 1,
+            ease: 'none',
+            scrollTrigger: { start: 0, end: 'max', scrub: 0.3 },
+          },
+        );
       }
-      .animate-slide-in { animation: slide-in 0.4s ease-out; }
-    `;
-    document.head.appendChild(style);
-    return () => document.head.removeChild(style);
+    });
+
+    return () => ctx.revert();
+  }, []);
+
+  /**
+   * Images and webfonts change every section's height. Without a refresh,
+   * every trigger below the fold is measured against stale positions.
+   */
+  useEffect(() => {
+    const refresh = () => ScrollTrigger.refresh();
+
+    window.addEventListener('load', refresh);
+    if (document.fonts?.ready) document.fonts.ready.then(refresh);
+
+    return () => window.removeEventListener('load', refresh);
   }, []);
 
   const handleNavLinkClick = (e, targetId) => {
     e.preventDefault();
-    const targetElement = document.getElementById(targetId);
-    if (targetElement) {
-      window.scrollTo({
-        top: targetElement.offsetTop - 80,
-        behavior: 'smooth',
-      });
-    }
+    scrollTo(targetId);
   };
 
   const handleFormSubmit = async (e) => {
@@ -146,6 +172,13 @@ const Home = () => {
 
   return (
     <div className="bg-[#F5F2EB] text-[#181614]">
+      {/* Reading progress. Move to `bottom-0` if it fights your header. */}
+      <div
+        ref={progressRef}
+        aria-hidden="true"
+        className="pointer-events-none fixed left-0 top-0 z-[70] h-[2px] w-full origin-left scale-x-0 bg-[#D97746]"
+      />
+
       <Header activeLink={activeLink} onNavLinkClick={handleNavLinkClick} />
 
       <SuccessToast
@@ -154,27 +187,14 @@ const Home = () => {
       />
 
       <main>
-        <div ref={sectionRefs.home}>
-          <Hero onNavLinkClick={handleNavLinkClick} />
-        </div>
-
-        <About sectionRef={sectionRefs.about} />
-
-        <Ventures sectionRef={sectionRefs.ventures} />
-
-        <ExperienceSection sectionRef={sectionRefs.experience} />
-
-        <AgaKhanGallery sectionRef={sectionRefs.gallery} />
-
-        <Skills sectionRef={sectionRefs.skills} />
-
-        <Blog sectionRef={sectionRefs.blog} />
-
-        <Contact
-          sectionRef={sectionRefs.contact}
-          onSubmit={handleFormSubmit}
-          isSubmitting={isSubmitting}
-        />
+        <Hero onNavLinkClick={handleNavLinkClick} />
+        <About />
+        <Ventures />
+        <ExperienceSection />
+        <AgaKhanGallery />
+        <Skills />
+        <Blog />
+        <Contact onSubmit={handleFormSubmit} isSubmitting={isSubmitting} />
       </main>
 
       <Footer />

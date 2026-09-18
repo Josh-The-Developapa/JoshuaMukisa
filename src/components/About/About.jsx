@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
+import { gsap, prefersReducedMotion } from '../../lib/gsap';
 
 const pillars = [
   {
@@ -22,15 +23,13 @@ const pillars = [
 ];
 
 const PillarCard = ({ pillar }) => (
-  <div className="border border-[#DDD8CC] bg-white p-4">
+  <div data-pillar className="border border-[#DDD8CC] bg-white p-4">
     <p className="mb-2 font-[JetBrains_Mono] text-[10px] uppercase tracking-[0.05em] text-[#D97746]">
       {pillar.label}
     </p>
-
     <h4 className="mb-1 font-[Newsreader] text-[16px] text-[#181614]">
       {pillar.title}
     </h4>
-
     <p className="font-[Plus_Jakarta_Sans] text-[12px] leading-[1.4] text-[#706D66]">
       {pillar.description}
     </p>
@@ -40,67 +39,143 @@ const PillarCard = ({ pillar }) => (
 /**
  * About
  *
- * Uses the same fluid gutter as Hero — `px-[clamp(1.5rem,5vw,3rem)]` — so the
- * two sections share one vertical edge at every width instead of stepping at
- * sm/lg. Vertical rhythm is fluid for the same reason.
+ * Choreography: the spine (heading + intro) leads, the pillar cards follow
+ * as a staggered set, and the essay blocks rise one at a time as you read
+ * down. The quote's accent rule draws itself — the section's one flourish.
  */
 const About = ({ sectionRef }) => {
+  const rootRef = useRef(null);
+
+  useLayoutEffect(() => {
+    const root = rootRef.current;
+    if (!root || prefersReducedMotion()) return;
+
+    const ctx = gsap.context((self) => {
+      const q = self.selector;
+
+      const reveal = (targets, trigger, vars = {}) => {
+        if (!targets || !targets.length) return;
+        gsap.from(targets, {
+          opacity: 0,
+          y: 28,
+          duration: 0.85,
+          stagger: 0.09,
+          scrollTrigger: { trigger, start: 'top 85%', once: true },
+          ...vars,
+        });
+      };
+
+      reveal(q('[data-spine]'), q('[data-spine]')[0]);
+      reveal(q('[data-pillar]'), q('[data-pillars]')[0], { y: 20 });
+
+      // Essay blocks each trigger off themselves, so the reading rhythm
+      // follows the scroll instead of firing all at once.
+      q('[data-essay]').forEach((block) => reveal([block], block, { y: 24 }));
+
+      const rule = q('[data-quote-rule]')[0];
+      if (rule) {
+        gsap.from(rule, {
+          scaleY: 0,
+          transformOrigin: 'top center',
+          duration: 1,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: q('[data-quote]')[0],
+            start: 'top 80%',
+            once: true,
+          },
+        });
+      }
+    }, root);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
     <section
       id="about"
       ref={sectionRef}
       className="box-border w-full overflow-x-clip border-b border-[#DDD8CC] bg-[#F5F2EB] px-[clamp(1.5rem,5vw,3rem)] py-[clamp(4rem,9vh,7rem)]"
     >
-      <div className="mx-auto grid w-full max-w-[1280px] grid-cols-1 gap-[clamp(3rem,5vw,4rem)] lg:grid-cols-[318px_minmax(0,1fr)]">
+      <div
+        ref={rootRef}
+        className="mx-auto grid w-full max-w-[1280px] grid-cols-1 gap-[clamp(3rem,5vw,4rem)] lg:grid-cols-[318px_minmax(0,1fr)]"
+      >
         {/* Left: chapter spine */}
         <div className="flex flex-col gap-10 border-l-2 border-[#181614] pl-[clamp(1.25rem,2.5vw,2rem)] lg:sticky lg:top-28 lg:self-start">
           <div className="flex flex-col gap-3">
-            <h2 className="font-[Newsreader] text-[clamp(2rem,4.2vw,2.75rem)] leading-[1.05] tracking-[-0.02em] text-[#181614]">
+            <h2
+              data-spine
+              className="font-[Newsreader] text-[clamp(2rem,4.2vw,2.75rem)] leading-[1.05] tracking-[-0.02em] text-[#181614]"
+            >
               The Story <br />
               So Far
             </h2>
-
-            <p className="font-[Plus_Jakarta_Sans] text-[14px] leading-[1.6] text-[#706D66]">
-              A documentary account of my journey and exploration of my craft,
+            <p
+              data-spine
+              className="font-[Plus_Jakarta_Sans] text-[14px] leading-[1.6] text-[#706D66]"
+            >
+              A documented account of my journey and exploration of my craft,
               and the pursuit of infrastructure that outlives its builder.
             </p>
           </div>
 
-          <div className="flex flex-col gap-4 border-t border-[#DDD8CC] pt-8">
+          <div
+            data-pillars
+            className="flex flex-col gap-4 border-t border-[#DDD8CC] pt-8"
+          >
             {pillars.map((pillar) => (
               <PillarCard key={pillar.label} pillar={pillar} />
             ))}
           </div>
         </div>
 
-        {/* Right: narrative */}
+        {/* Right: narrative essay */}
         <div className="flex min-w-0 flex-col gap-6">
-          <p className="font-[Newsreader] text-[clamp(1.5rem,2.6vw,1.75rem)] italic leading-[1.3] text-[#1E293B]">
+          <p
+            data-essay
+            className="font-[Newsreader] text-[clamp(1.5rem,2.6vw,1.75rem)] italic leading-[1.3] text-[#1E293B]"
+          >
             I got into tech in March 2020, during Uganda&apos;s first COVID
             lockdown. I was thirteen, bored out of my mind, dreaming big like
             the Zuckerbergs and Gates of the world, but knowing absolutely
             nothing about how any of it worked.
           </p>
 
-          <p className="max-w-[70ch] font-[Plus_Jakarta_Sans] text-[clamp(1rem,1.4vw,1.125rem)] leading-[1.65] text-[#706D66]">
+          <p
+            data-essay
+            className="max-w-[70ch] font-[Plus_Jakarta_Sans] text-[clamp(1rem,1.4vw,1.125rem)] leading-[1.65] text-[#706D66]"
+          >
             So I started teaching myself. At first it was YouTube tutorials,
             online courses, and whatever coding apps I could find. I didn&apos;t
             have a mentor or a roadmap. I learned something, tried to build with
             it, hit a wall, learned some more, and repeated the process.
           </p>
 
-          <blockquote className="flex flex-col gap-4 border-l-4 border-[#D97746] bg-[#EFECE4] p-[clamp(1.5rem,3vw,2rem)]">
+          <blockquote
+            data-quote
+            data-essay
+            className="relative flex flex-col gap-4 bg-[#EFECE4] p-[clamp(1.5rem,3vw,2rem)]"
+          >
+            {/* Accent rule as an element so it can draw on entry. */}
+            <span
+              data-quote-rule
+              aria-hidden="true"
+              className="absolute left-0 top-0 h-full w-[4px] bg-[#D97746]"
+            />
             <p className="font-[Newsreader] text-[clamp(1.375rem,2.5vw,1.6875rem)] leading-[1.3] text-[#181614]">
               &quot;Learn what you need. Build what you can. Then learn what
               comes next.&quot;
             </p>
-
             {/* <cite className="font-[JetBrains_Mono] text-[11px] uppercase not-italic tracking-[0.08em] text-[#706D66]">
-              — Joshua Mukisa, Personal Principle
+              — Joshua Mukisa, Architectural Dispatch, Kampala
             </cite> */}
           </blockquote>
 
-          <p className="max-w-[70ch] font-[Plus_Jakarta_Sans] text-[clamp(1rem,1.4vw,1.125rem)] leading-[1.65] text-[#706D66]">
+          <p
+            data-essay
+            className="max-w-[70ch] font-[Plus_Jakarta_Sans] text-[clamp(1rem,1.4vw,1.125rem)] leading-[1.65] text-[#706D66]"
+          >
             VoteAble was the first project that made that approach real. After
             my school had to rerun its student council elections because of
             problems with the existing voting system, some friends dared me to
@@ -109,7 +184,10 @@ const About = ({ sectionRef }) => {
             thing.
           </p>
 
-          <p className="max-w-[70ch] font-[Plus_Jakarta_Sans] text-[clamp(1rem,1.4vw,1.125rem)] leading-[1.65] text-[#706D66]">
+          <p
+            data-essay
+            className="max-w-[70ch] font-[Plus_Jakarta_Sans] text-[clamp(1rem,1.4vw,1.125rem)] leading-[1.65] text-[#706D66]"
+          >
             I had no idea what I was doing. So I learned what I needed, built
             the next piece, broke something else, learned again, and kept going
             until the platform worked. VoteAble launched in 2022 and has since
@@ -135,6 +213,28 @@ const About = ({ sectionRef }) => {
             <br /> <br />
             Wakanda is the goal!
           </p>
+
+          {/* <div
+            data-essay
+            className="mt-4 flex flex-col gap-4 border-t border-[#DDD8CC] pt-8 sm:flex-row sm:items-center sm:justify-between"
+          >
+            <div className="flex flex-col gap-0.5">
+              <span className="font-[JetBrains_Mono] text-[12px] text-[#706D66]">
+                Co-Founder &amp; Architect
+              </span>
+              <span className="font-[JetBrains_Mono] text-[12px] font-medium text-[#181614]">
+                Joshua Mukisa // Chief Architect
+              </span>
+            </div>
+            <div className="flex flex-col gap-0.5 sm:text-right">
+              <span className="font-[JetBrains_Mono] text-[12px] text-[#706D66]">
+                Origin Coordinates
+              </span>
+              <span className="font-[JetBrains_Mono] text-[12px] font-medium text-[#181614]">
+                Kampala, Central Region, Uganda
+              </span>
+            </div>
+          </div> */}
         </div>
       </div>
     </section>

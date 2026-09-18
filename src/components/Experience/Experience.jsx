@@ -1,4 +1,5 @@
 import React from 'react';
+import useScrollReveal from '../../hooks/useScrollReveal';
 import VideraLogo from '../../assets/Videra Logo.png';
 import VoteAbleLogo from '../../assets/VoteAble-Logo.jpg';
 import ElectoralComission from '../../assets/Electoral Comission.png';
@@ -144,21 +145,35 @@ const ExperienceCard = ({ experience }) => (
   </div>
 );
 
+/**
+ * Experience
+ *
+ * One reveal per card, batched — cards that share the viewport stagger
+ * together. No per-bullet animation; that reads as a loading spinner.
+ */
 const ExperienceSection = ({ sectionRef }) => {
+  const scope = useScrollReveal({ y: 30, stagger: 0.1 });
+
   return (
     <section
       id="experience"
       ref={sectionRef}
-      className="py-16 sm:py-24 lg:py-28 px-6 sm:px-8 lg:px-12 border-b border-[#DDD8CC] bg-[#F5F2EB]"
+      className="box-border w-full overflow-x-clip border-b border-[#DDD8CC] bg-[#F5F2EB] px-[clamp(1.5rem,5vw,3rem)] py-[clamp(4rem,9vh,7rem)]"
     >
-      <div className="max-w-[1280px] mx-auto flex flex-col gap-10 sm:gap-12">
-        <div className="pb-6 border-b border-[#181614]">
-          <h2 className="font-[Newsreader] font-light text-[40px] sm:text-[52px] tracking-[-0.02em] text-[#181614]">
+      <div
+        ref={scope}
+        className="mx-auto flex w-full max-w-[1280px] flex-col gap-[clamp(2.5rem,4vw,3rem)]"
+      >
+        <div className="border-b border-[#181614] pb-6">
+          <h2
+            data-reveal
+            className="font-[Newsreader] text-[clamp(2.5rem,4.5vw,3.25rem)] font-light tracking-[-0.02em] text-[#181614]"
+          >
             Work Experience
           </h2>
         </div>
 
-        <div className="flex flex-col gap-6 sm:gap-8">
+        <div className="flex flex-col gap-[clamp(1.5rem,3vw,2rem)]">
           {experiences.map((experience) => (
             <ExperienceCard key={experience.company} experience={experience} />
           ))}

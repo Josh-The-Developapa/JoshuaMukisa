@@ -1,5 +1,4 @@
-import React from 'react';
-
+import React, { useLayoutEffect, useRef } from 'react';
 import { ArrowIcon } from '../Header/Header';
 
 import VoteAbleImg from '../../assets/VoteAble.png';
@@ -7,23 +6,31 @@ import CaderaImg from '../../assets/Cadera.png';
 import CImageAIImg from '../../assets/CImage-AI.png';
 import TumorVisionImg from '../../assets/TumorVision.webp';
 
+import { gsap, prefersReducedMotion } from '../../lib/gsap';
+
 const SpecRow = ({ label, value }) => (
-  <div className="flex items-start justify-between gap-6 py-2 border-b border-[#DDD8CC] last:border-b-0">
-    <span className="font-[JetBrains_Mono] text-[11px] sm:text-[12px] text-[#706D66] flex-shrink-0">
+  <div className="flex items-start justify-between gap-6 border-b border-[#DDD8CC] py-2 last:border-b-0">
+    <span className="flex-shrink-0 font-[JetBrains_Mono] text-[11px] text-[#706D66] sm:text-[12px]">
       {label}
     </span>
-
-    <span className="font-[JetBrains_Mono] text-[11px] sm:text-[12px] font-medium text-[#181614] text-right">
+    <span className="text-right font-[JetBrains_Mono] text-[11px] font-medium text-[#181614] sm:text-[12px]">
       {value}
     </span>
   </div>
 );
 
 const CasePlate = ({ image, alt }) => (
-  <div className="bg-white border border-[#181614] p-2 w-full">
-    <div className="aspect-[16/10] bg-[#181614] overflow-hidden flex items-center justify-center">
+  <div className="w-full border border-[#181614] bg-white p-2">
+    <div className="flex aspect-[16/10] items-center justify-center overflow-hidden bg-[#181614]">
       {image ? (
-        <img src={image} alt={alt} className="w-full h-full object-cover" />
+        <img
+          data-case-img
+          src={image}
+          alt={alt}
+          loading="lazy"
+          decoding="async"
+          className="h-full w-full object-cover"
+        />
       ) : (
         <span className="font-[JetBrains_Mono] text-[11px] uppercase tracking-[0.1em] text-[#F5F2EB]/40">
           {alt}
@@ -43,55 +50,56 @@ const CaseStudy = ({
   primaryAction,
   secondaryAction,
 }) => (
-  <article className="bg-white border border-[#DDD8CC] grid grid-cols-1 lg:grid-cols-2">
+  <article
+    data-case
+    className="grid grid-cols-1 border border-[#DDD8CC] bg-white lg:grid-cols-2"
+  >
     <div
-      className={`p-8 sm:p-12 flex flex-col justify-between gap-8 ${
+      className={`flex flex-col justify-between gap-8 p-[clamp(2rem,4vw,3rem)] ${
         reverse ? 'lg:order-2' : ''
       }`}
     >
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
-          <h3 className="font-[Newsreader] text-[30px] sm:text-[36px] text-[#181614]">
+          <h3 className="font-[Newsreader] text-[clamp(1.875rem,3vw,2.25rem)] text-[#181614]">
             {title}
           </h3>
-
           <p className="font-[JetBrains_Mono] text-[11px] uppercase tracking-[0.05em] text-[#706D66]">
             {eyebrow}
           </p>
         </div>
 
-        <p className="font-[Plus_Jakarta_Sans] text-[15px] sm:text-[16px] leading-[1.55] text-[#706D66]">
+        <p className="max-w-[62ch] font-[Plus_Jakarta_Sans] text-[clamp(0.9375rem,1.2vw,1rem)] leading-[1.55] text-[#706D66]">
           {description}
         </p>
 
-        <div className="bg-[#F5F2EB] border border-[#DDD8CC] p-4">
+        <div className="border border-[#DDD8CC] bg-[#F5F2EB] p-4">
           {specs.map((row) => (
             <SpecRow key={row.label} {...row} />
           ))}
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-[#DDD8CC]">
+      <div className="flex flex-wrap items-center gap-4 border-t border-[#DDD8CC] pt-4">
         {primaryAction && (
           <a
             href={primaryAction.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-[#181614] text-[#F5F2EB] px-5 py-2.5 font-[JetBrains_Mono] text-[11px] uppercase tracking-[0.08em] hover:bg-[#302D2A] transition-colors duration-200"
+            className="inline-flex items-center gap-2 bg-[#181614] px-5 py-2.5 font-[JetBrains_Mono] text-[11px] uppercase tracking-[0.08em] text-[#F5F2EB] transition-colors duration-200 hover:bg-[#302D2A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D97746]"
           >
             {primaryAction.text}
-            {/* <ArrowIcon /> */}
+            <ArrowIcon />
           </a>
         )}
-
         {secondaryAction && secondaryAction.href ? (
           <a
             href={secondaryAction.href}
             onClick={secondaryAction.onClick}
-            className="inline-flex items-center gap-2 border border-[#181614] text-[#181614] px-5 py-2.5 font-[JetBrains_Mono] text-[11px] uppercase tracking-[0.08em] hover:bg-[#181614] hover:text-[#F5F2EB] transition-colors duration-200"
+            className="inline-flex items-center gap-2 border border-[#181614] px-5 py-2.5 font-[JetBrains_Mono] text-[11px] uppercase tracking-[0.08em] text-[#181614] transition-colors duration-200 hover:bg-[#181614] hover:text-[#F5F2EB]"
           >
             {secondaryAction.text}
-            {/* <ArrowIcon /> */}
+            <ArrowIcon />
           </a>
         ) : secondaryAction ? (
           <span className="font-[JetBrains_Mono] text-[11px] uppercase tracking-[0.08em] text-[#706D66]">
@@ -102,10 +110,10 @@ const CaseStudy = ({
     </div>
 
     <div
-      className={`bg-[#EFECE4] p-8 sm:p-12 flex items-center ${
+      className={`flex items-center bg-[#EFECE4] p-[clamp(2rem,4vw,3rem)] ${
         reverse
-          ? 'lg:order-1 lg:border-r border-[#DDD8CC]'
-          : 'lg:border-l border-[#DDD8CC]'
+          ? 'border-[#DDD8CC] lg:order-1 lg:border-r'
+          : 'border-[#DDD8CC] lg:border-l'
       }`}
     >
       <CasePlate image={image} alt={title} />
@@ -114,25 +122,30 @@ const CaseStudy = ({
 );
 
 const MiniCase = ({ eyebrow, title, description, image, link }) => (
-  <article className="bg-white border border-[#DDD8CC] p-8 sm:p-10 flex flex-col justify-between gap-6 h-full">
+  <article
+    data-mini
+    className="flex h-full flex-col justify-between gap-6 border border-[#DDD8CC] bg-white p-[clamp(2rem,3vw,2.5rem)]"
+  >
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
-        <h3 className="font-[Newsreader] text-[26px] sm:text-[28px] text-[#181614]">
+        <h3 className="font-[Newsreader] text-[clamp(1.625rem,2.4vw,1.75rem)] text-[#181614]">
           {title}
         </h3>
-
         <p className="font-[JetBrains_Mono] text-[11px] uppercase tracking-[0.05em] text-[#706D66]">
           {eyebrow}
         </p>
       </div>
 
-      <div className="bg-[#EFECE4] border border-[#181614] p-2">
-        <div className="aspect-[16/10] bg-white overflow-hidden flex items-center justify-center">
+      <div className="border border-[#181614] bg-[#EFECE4] p-2">
+        <div className="flex aspect-[16/10] items-center justify-center overflow-hidden bg-white">
           {image ? (
             <img
+              data-case-img
               src={image}
               alt={title}
-              className="w-full h-full object-cover"
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full object-cover"
             />
           ) : (
             <span className="font-[JetBrains_Mono] text-[11px] uppercase tracking-[0.1em] text-[#181614]/30">
@@ -142,41 +155,114 @@ const MiniCase = ({ eyebrow, title, description, image, link }) => (
         </div>
       </div>
 
-      <p className="font-[Plus_Jakarta_Sans] text-[13px] sm:text-[14px] leading-[1.6] text-[#706D66]">
+      <p className="font-[Plus_Jakarta_Sans] text-[clamp(0.8125rem,1.1vw,0.875rem)] leading-[1.6] text-[#706D66]">
         {description}
       </p>
     </div>
 
-    <div className="flex items-center justify-between pt-4 border-t border-[#DDD8CC]">
+    <div className="flex items-center justify-between border-t border-[#DDD8CC] pt-4">
       <span className="font-[JetBrains_Mono] text-[12px] font-medium text-[#181614]">
         {link.status}
       </span>
-
       <a
         href={link.href}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-1.5 font-[JetBrains_Mono] text-[11px] uppercase tracking-[0.05em] text-[#D97746] hover:text-[#181614] transition-colors duration-200"
+        className="inline-flex items-center gap-1.5 font-[JetBrains_Mono] text-[11px] uppercase tracking-[0.05em] text-[#D97746] transition-colors duration-200 hover:text-[#181614]"
       >
         {link.text}
-        {/* <ArrowIcon className="w-2 h-2" /> */}
+        <ArrowIcon className="h-2 w-2" />
       </a>
     </div>
   </article>
 );
 
+/**
+ * Ventures
+ *
+ * Choreography: the section rule wipes in, each case study rises once,
+ * and the screenshots inside the plates drift on a scrub. The drift is
+ * the reason the plate images are held at scale 1.08 — it hides the edges.
+ */
 const Ventures = ({ sectionRef }) => {
+  const rootRef = useRef(null);
+
+  useLayoutEffect(() => {
+    const root = rootRef.current;
+    if (!root || prefersReducedMotion()) return;
+
+    const ctx = gsap.context((self) => {
+      const q = self.selector;
+
+      const heading = q('[data-section-head]')[0];
+      if (heading) {
+        gsap.from(heading, {
+          opacity: 0,
+          y: 24,
+          scrollTrigger: { trigger: heading, start: 'top 88%', once: true },
+        });
+        gsap.from(q('[data-section-rule]')[0], {
+          scaleX: 0,
+          transformOrigin: 'left center',
+          duration: 1.1,
+          ease: 'power2.inOut',
+          scrollTrigger: { trigger: heading, start: 'top 88%', once: true },
+        });
+      }
+
+      [...q('[data-case]'), ...q('[data-mini]')].forEach((card) => {
+        gsap.from(card, {
+          opacity: 0,
+          y: 36,
+          duration: 0.9,
+          scrollTrigger: { trigger: card, start: 'top 84%', once: true },
+        });
+      });
+
+      q('[data-case-img]').forEach((img) => {
+        gsap.fromTo(
+          img,
+          { yPercent: -4, scale: 1.08 },
+          {
+            yPercent: 4,
+            scale: 1.08,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: img.closest('[data-case], [data-mini]'),
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: true,
+            },
+          },
+        );
+      });
+    }, root);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
     <section
       id="ventures"
       ref={sectionRef}
-      className="py-16 sm:py-24 lg:py-28 px-6 sm:px-8 lg:px-12 border-b border-[#DDD8CC] bg-[#F5F2EB]"
+      className="box-border w-full overflow-x-clip border-b border-[#DDD8CC] bg-[#F5F2EB] px-[clamp(1.5rem,5vw,3rem)] py-[clamp(4rem,9vh,7rem)]"
     >
-      <div className="max-w-[1280px] mx-auto flex flex-col gap-12 sm:gap-16">
-        <div className="flex items-end justify-between gap-6 pb-6 border-b border-[#181614]">
-          <h2 className="font-[Newsreader] font-light text-[40px] sm:text-[52px] tracking-[-0.02em] text-[#181614]">
+      <div
+        ref={rootRef}
+        className="mx-auto flex w-full max-w-[1280px] flex-col gap-[clamp(3rem,5vw,4rem)]"
+      >
+        <div className="relative pb-6">
+          <h2
+            data-section-head
+            className="font-[Newsreader] text-[clamp(2.5rem,4.5vw,3.25rem)] font-light tracking-[-0.02em] text-[#181614]"
+          >
             Ventures &amp; Flagship Works
           </h2>
+          <span
+            data-section-rule
+            aria-hidden="true"
+            className="absolute bottom-0 left-0 block h-px w-full bg-[#181614]"
+          />
         </div>
 
         <div className="flex flex-col gap-8">

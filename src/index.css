@@ -1,9 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import 'tailwindcss';
+@import 'lenis/dist/lenis.css';
 
 body {
   font-family: 'Inter', sans-serif;
-  scroll-behavior: smooth;
+  /* scroll-behavior: smooth; */
 }
 
 .gradient-text {
@@ -15,7 +16,8 @@ body {
 
 .project-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
     0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
