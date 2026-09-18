@@ -1,272 +1,122 @@
 import React from 'react';
 
-// Configuration object for easy modification
-const skillsConfig = {
-  title: 'Technical Skills',
-  subtitle: 'These are the tools I build with, and the traits I lead with',
-  primarySkills: [
-    {
-      name: 'React.js',
-      level: 'Advanced',
-      icon: 'fab fa-react',
-      iconBg: 'bg-blue-50',
-      iconColor: 'text-blue-500',
-    },
-    {
-      name: 'Node.js',
-      level: 'Advanced',
-      icon: 'fab fa-node-js',
-      iconBg: 'bg-green-50',
-      iconColor: 'text-green-500',
-    },
-    {
-      name: 'Express.js',
-      level: 'Advanced',
-      icon: 'fas fa-network-wired',
-      iconBg: 'bg-gray-100',
-      iconColor: 'text-gray-700',
-    },
-    {
-      name: 'NestJS',
-      level: 'Advanced',
-      icon: 'fas fa-cube',
-      iconBg: 'bg-red-50',
-      iconColor: 'text-red-600',
-    },
-    {
-      name: 'MongoDB',
-      level: 'Advanced',
-      icon: 'fas fa-database',
-      iconBg: 'bg-green-50',
-      iconColor: 'text-green-700',
-    },
-    {
-      name: 'PostgreSQL',
-      level: 'Advanced',
-      icon: 'fas fa-database',
-      iconBg: 'bg-blue-50',
-      iconColor: 'text-blue-700',
-    },
-    {
-      name: 'JavaScript',
-      level: 'Advanced',
-      icon: 'fab fa-js',
-      iconBg: 'bg-yellow-50',
-      iconColor: 'text-yellow-500',
-    },
-    {
-      name: 'Python',
-      level: 'Advanced',
-      icon: 'fab fa-python',
-      iconBg: 'bg-orange-50',
-      iconColor: 'text-orange-500',
-    },
-    {
-      name: 'C++',
-      level: 'Advanced',
-      icon: 'fas fa-code',
-      iconBg: 'bg-gray-100',
-      iconColor: 'text-gray-700',
-    },
-    {
-      name: 'Arduino',
-      level: 'Advanced',
-      icon: 'fas fa-microchip',
-      iconBg: 'bg-green-100',
-      iconColor: 'text-green-700',
-    },
-    {
-      name: 'PyTorch',
-      level: 'Moderate',
-      icon: 'fas fa-fire',
-      iconBg: 'bg-red-50',
-      iconColor: 'text-red-500',
-    },
-  ],
-  additionalSkills: [
-    'Prisma',
-    'Supabase',
-    'Tailwind CSS',
-    'Material UI',
-    'Bootstrap',
-    'Microsoft Excel',
-    'Microsoft Word',
-    'Microsoft PowerPoint',
-    'Notion (Organization)',
-    'HTML',
-    'CSS',
-    'Figma',
-    'Git',
-    'GitHub',
-    'VS Code',
-    'NumPy',
-    'Pandas',
-    'Matplotlib',
-    'REST APIs',
-    'Postman',
-  ],
-  softSkills: [
-    'Creativity',
-    'Problem Solving',
-    'Inquisitiveness',
-    'Adaptability',
-    'Jovial',
-    'Lively',
-    'Fast Learner',
-    'Work Ethic',
-    'Discipline',
-    'Initiative',
-  ],
-};
+const cells = [
+  {
+    title: 'Systems & Backends',
+    description:
+      'Constructing end-to-end resilient web services with strict contract guarantees and low payload overhead.',
+    rows: [
+      { label: 'Node.js / Express', value: 'Advanced' },
+      { label: 'NestJS', value: 'Advanced' },
+      { label: 'REST APIs', value: 'Production' },
+      { label: 'JavaScript', value: 'Advanced' },
+    ],
+  },
+  {
+    title: 'Data Architecture',
+    description:
+      'High-throughput relational normalization, row-level tenant security, and atomic transactional integrity.',
+    rows: [
+      { label: 'PostgreSQL', value: 'Row-Level Security' },
+      { label: 'MongoDB', value: 'Schema Design' },
+      { label: 'Prisma ORM', value: 'Migrations' },
+      { label: 'Supabase', value: 'Advanced' },
+    ],
+  },
+  {
+    title: 'Applied ML & Vision',
+    description:
+      'Local machine learning deployed directly to client hardware to preserve privacy and bypass GPU server costs.',
+    rows: [
+      { label: 'TensorFlow.js', value: 'Client Runtime' },
+      { label: 'PyTorch / ResNet', value: 'Vision Modeling' },
+      { label: 'MobileNet', value: 'Edge Inference' },
+      { label: 'NumPy / Pandas', value: 'Moderate' },
+    ],
+  },
+  {
+    title: 'Embedded & Firmware',
+    description:
+      'Bridging the digital world with environmental reality through microcontroller programming and telemetry.',
+    rows: [
+      { label: 'C++ & Arduino', value: 'Advanced' },
+      { label: 'Sensor Interfacing', value: 'Applied' },
+      { label: 'Low-Power Telemetry', value: 'Design Stage' },
+    ],
+  },
+  {
+    title: 'Tooling & Infrastructure',
+    description:
+      'Reproducible build pipelines, systems administration, and production-grade delivery workflows.',
+    rows: [
+      { label: 'Git / GitHub', value: 'Daily' },
+      { label: 'VS Code', value: 'Fluent' },
+      { label: 'Figma', value: 'Working' },
+      { label: 'Postman', value: 'Advanced' },
+    ],
+  },
+  {
+    title: 'Venture Leadership',
+    description:
+      'Translating institutional needs into technical roadmaps, shipping software, and coordinating teams.',
+    rows: [
+      { label: 'Co-Founding (Videra)', value: 'Ongoing' },
+      { label: 'Product Direction', value: 'Advanced' },
+      { label: 'Team Coordination', value: 'Applied' },
+    ],
+  },
+];
 
-// Reusable Skill Badge Component with responsive design
-const SkillBadge = ({ skill, className = '' }) => (
-  <div
-    className={`skill-badge bg-white p-4 sm:p-5 lg:p-6 rounded-xl shadow-sm hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 text-center ${className}`}
-  >
-    <div
-      className={`w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 mx-auto mb-3 sm:mb-4 ${skill.iconBg} rounded-full flex items-center justify-center`}
-    >
-      <i
-        className={`${skill.icon} ${skill.iconColor} text-xl sm:text-2xl lg:text-3xl`}
-      ></i>
-    </div>
-    <h3 className="font-semibold mb-1 sm:mb-2 text-sm sm:text-base">
-      {skill.name}
-    </h3>
-    <p className="text-gray-500 text-xs sm:text-sm">{skill.level}</p>
-  </div>
-);
-
-// Reusable Skill Tag Component with responsive text
-const SkillTag = ({ skill, className = '' }) => (
-  <span
-    className={`px-3 py-1.5 sm:py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-xs sm:text-sm transition-colors duration-200 cursor-default ${className}`}
-  >
-    {skill}
-  </span>
-);
-
-// Reusable Section Header Component with responsive typography
-const SectionHeader = ({ title, subtitle = '', className = '' }) => (
-  <div className={`text-center mb-8 sm:mb-12 lg:mb-16 ${className}`}>
-    <h2 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold mb-2 sm:mb-4">
-      {title}
-    </h2>
-    {subtitle && (
-      <p className="text-gray-600 mb-3 sm:mb-4 text-sm sm:text-base lg:text-lg max-w-3xl mx-auto px-4">
-        {subtitle}
+const Cell = ({ cell }) => (
+  <div className="bg-white border border-[#DDD8CC] p-6 sm:p-8 flex flex-col justify-between gap-8 h-full">
+    <div className="flex flex-col gap-3">
+      <h3 className="font-[Newsreader] text-[22px] sm:text-[24px] text-[#181614]">
+        {cell.title}
+      </h3>
+      <p className="font-[Plus_Jakarta_Sans] text-[12px] leading-[1.6] text-[#706D66]">
+        {cell.description}
       </p>
-    )}
-    <div className="w-16 sm:w-20 h-1 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto"></div>
+    </div>
+    <div className="flex flex-col gap-2">
+      {cell.rows.map((row) => (
+        <div
+          key={row.label}
+          className="flex items-center justify-between py-1 border-b border-[#F5F2EB] last:border-b-0"
+        >
+          <span className="font-[JetBrains_Mono] text-[12px] text-[#181614]">
+            {row.label}
+          </span>
+          <span className="font-[JetBrains_Mono] text-[12px] text-[#706D66]">
+            {row.value}
+          </span>
+        </div>
+      ))}
+    </div>
   </div>
 );
 
-// Skill Category Card for better organization
-const SkillCategory = ({ title, children, className = '' }) => (
-  <div
-    className={`bg-white p-4 sm:p-6 lg:p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 ${className}`}
-  >
-    <h3 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6 text-center sm:text-left">
-      {title}
-    </h3>
-    {children}
-  </div>
-);
-
-// Main Skills Section Component with full responsiveness
-const SkillsSection = ({
-  config = skillsConfig,
-  sectionId = 'skills',
-  containerClassName = '',
-  gridClassName = '',
-  showAdditionalSkills = true,
-  sectionRef,
-}) => {
+const Skills = ({ sectionRef }) => {
   return (
     <section
-      id={sectionId}
+      id="skills"
       ref={sectionRef}
-      className={`py-15 bg-gray-50 ${containerClassName}`}
+      className="py-16 sm:py-24 lg:py-28 px-6 sm:px-8 lg:px-12 border-b border-[#DDD8CC] bg-[#F5F2EB]"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <SectionHeader title={config.title} subtitle={config.subtitle} />
+      <div className="max-w-[1280px] mx-auto flex flex-col gap-12 sm:gap-16">
+        <div className="flex items-end justify-between gap-6 pb-6 border-b border-[#181614]">
+          <h2 className="font-[Newsreader] font-light text-[40px] sm:text-[52px] tracking-[-0.02em] text-[#181614]">
+            Technical Skills
+          </h2>
+        </div>
 
-        {/* Primary Skills Grid - Fully Responsive */}
-        <div
-          className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 sm:gap-4 lg:gap-6 mb-8 sm:mb-12 ${gridClassName}`}
-        >
-          {config.primarySkills.map((skill, index) => (
-            <SkillBadge key={`skill-${index}`} skill={skill} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          {cells.map((cell) => (
+            <Cell key={cell.title} cell={cell} />
           ))}
         </div>
-
-        {/* Additional Skills and Soft Skills Container */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
-          {/* Additional Skills */}
-          {showAdditionalSkills &&
-            config.additionalSkills &&
-            config.additionalSkills.length > 0 && (
-              <SkillCategory title="Additional Skills & Tools">
-                <div className="flex flex-wrap gap-2 sm:gap-3">
-                  {config.additionalSkills.map((skill, index) => (
-                    <SkillTag key={`additional-skill-${index}`} skill={skill} />
-                  ))}
-                </div>
-              </SkillCategory>
-            )}
-
-          {/* Soft Skills */}
-          {config.softSkills && config.softSkills.length > 0 && (
-            <SkillCategory title="Soft Skills">
-              <div className="flex flex-wrap gap-2 sm:gap-3">
-                {config.softSkills.map((skill, index) => (
-                  <SkillTag key={`soft-skill-${index}`} skill={skill} />
-                ))}
-              </div>
-            </SkillCategory>
-          )}
-        </div>
-
-        {/* Skills Summary for Large Screens */}
-        {/* <div className="hidden xl:block mt-12">
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-8 rounded-2xl">
-            <div className="text-center">
-              <h4 className="text-xl font-semibold mb-4">Skills Overview</h4>
-              <div className="grid grid-cols-3 gap-8">
-                <div>
-                  <div className="text-3xl font-bold text-blue-600 mb-2">
-                    {
-                      config.primarySkills.filter((s) => s.level === 'Advanced')
-                        .length
-                    }
-                  </div>
-                  <p className="text-gray-600">Advanced Skills</p>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-green-600 mb-2">
-                    {config.additionalSkills?.length +
-                      config.primarySkills?.length || 0}
-                  </div>
-                  <p className="text-gray-600">Tools & Technologies</p>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-purple-600 mb-2">
-                    {config.softSkills?.length || 0}
-                  </div>
-                  <p className="text-gray-600">Soft Skills</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div> */}
       </div>
     </section>
   );
 };
 
-// Export the main component
-export default SkillsSection;
-
-// Also export sub-components for maximum flexibility
-export { SkillBadge, SkillTag, SectionHeader, skillsConfig };
+export default Skills;

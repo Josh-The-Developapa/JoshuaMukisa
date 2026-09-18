@@ -1,0 +1,56 @@
+/* Editorial monograph type system — Newsreader / Plus Jakarta Sans / JetBrains Mono
+   ------------------------------------------------------------------------------
+   Import this file once, near the top of your app (e.g. in main.jsx / index.jsx,
+   or index.css): 
+
+       import './editorial-fonts.css';
+
+   WHY THIS FILE EXISTS
+   Every component (Header, Hero, About, Ventures, ExperienceSection,
+   AgaKhanGallery, Skills, Blog, Contact, Footer) sets its type with three
+   Tailwind arbitrary-value classes:
+
+       font-[Newsreader]        → display serif (headings, pull-quotes)
+       font-[Plus_Jakarta_Sans] → body copy
+       font-[JetBrains_Mono]    → all-caps labels, nav, buttons, spec grids,
+                                   captions, footer index, form labels
+
+   Tailwind only generates CSS for an arbitrary-value class if it finds that
+   literal string in a file covered by tailwind.config's `content` globs. If
+   these components live somewhere your config doesn't scan yet, ALL THREE
+   classes silently produce zero CSS — not just one of them — and every
+   element quietly falls back to whatever font is already set globally in
+   your app. If that happens to be Newsreader (or inherits from something
+   that is), that's exactly "everything looks like Newsreader" even though
+   the JetBrains Mono classes are correctly applied in the markup.
+
+   The rules below define those exact class names in plain CSS, so they work
+   whether or not Tailwind ever picks them up. They're additive/idempotent —
+   if Tailwind *is* generating the same classes, these just duplicate them
+   harmlessly.
+
+   Once you confirm real fonts are rendering, the fix that actually matters
+   long-term is adding these component paths to tailwind.config's `content`
+   array so Tailwind generates its own copies of every utility you use
+   (colors included) — not just the three below.
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+.font-\[Newsreader\] {
+  font-family: 'Newsreader', Georgia, 'Times New Roman', serif !important;
+}
+
+.font-\[Plus_Jakarta_Sans\] {
+  font-family:
+    'Plus Jakarta Sans',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif !important;
+}
+
+.font-\[JetBrains_Mono\] {
+  font-family:
+    'JetBrains Mono', 'SFMono-Regular', Menlo, Consolas, monospace !important;
+}

@@ -6,6 +6,7 @@ import Home from './pages/Home/Home';
 import FrenchLearner from './pages/French/French';
 import BirthdayForMonica from './pages/Birthday/Birthday';
 import Resume from './pages/Resume/Resume';
+import './editorial-fonts.css';
 
 const router = createBrowserRouter([
   {
