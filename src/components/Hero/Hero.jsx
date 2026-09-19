@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useRef } from 'react';
 import { ArrowIcon } from '../Header/Header';
-import PortraitPhoto from '../../assets/Joshua.png';
+import PortraitPhoto from '../../assets/Joshua\ Mukisa.png';
 import { gsap, prefersReducedMotion } from '../../lib/gsap';
 
 const PORTRAIT_SRC = PortraitPhoto;
