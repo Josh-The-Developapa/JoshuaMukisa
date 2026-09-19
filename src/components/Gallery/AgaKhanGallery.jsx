@@ -33,11 +33,6 @@ import { gsap, ScrollTrigger, prefersReducedMotion } from '../../lib/gsap';
  *    their cruise speed, so the gallery answers the scroll
  *  - the tweens pause entirely when the section is off screen
  *  - hover pauses smoothly rather than freezing mid-frame
- *
- * Hover-pause is gated behind a `(hover: hover) and (pointer: fine)`
- * media query so it only runs on devices that actually support hover.
- * On touch screens, `mouseenter` fires on tap but there's often no
- * matching `mouseleave`, which used to leave rows stuck mid-scroll.
  */
 
 const topRow = [
@@ -198,11 +193,7 @@ const Plate = ({ item }) => (
 );
 
 const Row = ({ items, direction, duration }) => (
-  <div
-    data-marquee-viewport
-    className="h-full overflow-hidden"
-    style={{ touchAction: 'pan-y' }}
-  >
+  <div data-marquee-viewport className="h-full overflow-hidden">
     <div
       data-marquee
       data-direction={direction}
@@ -223,15 +214,6 @@ const AgaKhanGallery = ({ sectionRef }) => {
   useLayoutEffect(() => {
     const root = rootRef.current;
     if (!root || prefersReducedMotion()) return;
-
-    // Mobile browsers fire a `resize` event when the address bar
-    // collapses/expands mid-scroll. ScrollTrigger recalculates trigger
-    // positions on resize by default, and doing that mid-transition can
-    // miscalculate whether this section is active — pausing the loops
-    // with nothing to un-pause them until an unrelated reflow (like a
-    // stray tap) forces a refresh. This flag stops it from treating
-    // browser-chrome resizes as real layout changes.
-    ScrollTrigger.config({ ignoreMobileResize: true });
 
     const ctx = gsap.context((self) => {
       const q = self.selector;
@@ -264,27 +246,17 @@ const AgaKhanGallery = ({ sectionRef }) => {
         });
       });
 
-      // Hover pause, per row — only wired up on devices that actually
-      // support hover. On touch screens `mouseenter` fires on tap but
-      // there's no reliable `mouseleave`, so the row would pause and
-      // never resume. Gating on this media query fixes that outright
-      // rather than trying to patch touch events into a hover model.
-      const supportsHover = window.matchMedia(
-        '(hover: hover) and (pointer: fine)',
-      ).matches;
-
+      // Hover pause, per row.
       const listeners = [];
-      if (supportsHover) {
-        q('[data-marquee-viewport]').forEach((viewport, i) => {
-          const loop = loops[i];
-          if (!loop) return;
-          const pause = () => gsap.to(loop, { timeScale: 0, duration: 0.4 });
-          const resume = () => gsap.to(loop, { timeScale: 1, duration: 0.6 });
-          viewport.addEventListener('mouseenter', pause);
-          viewport.addEventListener('mouseleave', resume);
-          listeners.push([viewport, pause, resume]);
-        });
-      }
+      q('[data-marquee-viewport]').forEach((viewport, i) => {
+        const loop = loops[i];
+        if (!loop) return;
+        const pause = () => gsap.to(loop, { timeScale: 0, duration: 0.4 });
+        const resume = () => gsap.to(loop, { timeScale: 1, duration: 0.6 });
+        viewport.addEventListener('mouseenter', pause);
+        viewport.addEventListener('mouseleave', resume);
+        listeners.push([viewport, pause, resume]);
+      });
 
       // Only run while visible, and let scroll velocity drive the speed.
       const boost = gsap.utils.clamp(1, 3.5);
