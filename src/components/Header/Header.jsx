@@ -20,7 +20,7 @@ const navLinks = [
   { href: '#about', text: 'The Story' },
   { href: '#ventures', text: 'Ventures' },
   { href: '#experience', text: 'Experience' },
-  { href: '#gallery', text: 'Field Gallery' },
+  { href: '#gallery', text: 'Gallery' },
   { href: '#skills', text: 'Skills' },
   { href: '#blog', text: 'Blog' },
   { href: '#contact', text: 'Contact' },
