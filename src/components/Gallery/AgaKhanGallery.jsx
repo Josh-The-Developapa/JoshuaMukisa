@@ -224,6 +224,15 @@ const AgaKhanGallery = ({ sectionRef }) => {
     const root = rootRef.current;
     if (!root || prefersReducedMotion()) return;
 
+    // Mobile browsers fire a `resize` event when the address bar
+    // collapses/expands mid-scroll. ScrollTrigger recalculates trigger
+    // positions on resize by default, and doing that mid-transition can
+    // miscalculate whether this section is active — pausing the loops
+    // with nothing to un-pause them until an unrelated reflow (like a
+    // stray tap) forces a refresh. This flag stops it from treating
+    // browser-chrome resizes as real layout changes.
+    ScrollTrigger.config({ ignoreMobileResize: true });
+
     const ctx = gsap.context((self) => {
       const q = self.selector;
 
