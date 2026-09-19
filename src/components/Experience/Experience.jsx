@@ -2,7 +2,7 @@ import React from 'react';
 
 import useScrollReveal from '../../hooks/useScrollReveal';
 
-import CaderaLogo from '../../assets/Videra Logo.png';
+import CaderaLogo from '../../assets/Cadera-Logo.png';
 import VoteAbleLogo from '../../assets/VoteAble-Logo.jpg';
 import ElectoralComission from '../../assets/Electoral Comission.png';
 import UpLift from '../../assets/UpLift.jpg';
@@ -11,7 +11,7 @@ const experiences = [
   {
     title: 'Co-Founder & Director',
     // company: 'Cadera Cloud Solutions Ltd',
-    company: 'Videra Digital Ltd',
+    company: 'Cadera Cloud Solutions Ltd',
     period: 'May 2025 — Present',
     location: 'Kampala, Uganda',
     logo: CaderaLogo,

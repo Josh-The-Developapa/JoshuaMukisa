@@ -14,6 +14,13 @@ import pic11 from '../../assets/voteable-6.jpeg';
 import pic12 from '../../assets/voteable-7.jpg';
 import pic13 from '../../assets/voteable-8.jpeg';
 import pic14 from '../../assets/voteable-9.jpg';
+import pic15 from '../../assets/uni-pic1.jpg';
+import pic16 from '../../assets/uni-pic2.jpeg';
+import pic17 from '../../assets/uni-pic3.jpg';
+import pic18 from '../../assets/uni-pic4.png';
+import pic19 from '../../assets/cadera-founders.jpg';
+import pic20 from '../../assets/grad-pic1.jpg';
+import pic21 from '../../assets/grad-pic2.jpg';
 
 import { gsap, ScrollTrigger, prefersReducedMotion } from '../../lib/gsap';
 
@@ -30,47 +37,60 @@ import { gsap, ScrollTrigger, prefersReducedMotion } from '../../lib/gsap';
 
 const topRow = [
   {
-    image: pic1,
-    ratio: 'aspect-[4/3]',
-    alt: 'VoteAble election day, Aga Khan High School',
-    caption: 'VoteAble Election day, Aga Khan High School 2024',
-  },
-  {
-    image: pic2,
-    ratio: 'aspect-[3/2]',
-    alt: 'VoteAble election day, Aga Khan High School',
-    caption: 'VoteAble Election day, Aga Khan High School 2024',
-  },
-  {
-    image: pic3,
-    ratio: 'aspect-[16/10]',
-    alt: 'VoteAble election day, Aga Khan High School',
-    caption: 'VoteAble Election day, Aga Khan High School 2024',
-  },
-  {
-    image: pic4,
-    ratio: 'aspect-[4/3]',
-    alt: 'VoteAble election day, Aga Khan High School',
-    caption: 'VoteAble Election day, Aga Khan High School 2024',
-  },
-  {
-    image: pic5,
-    ratio: 'aspect-[3/2]',
-    alt: 'Aga Khan High School',
-    caption: 'VoteAble Election day, Aga Khan High School 2024',
-  },
-  {
     image: pic13,
     ratio: 'aspect-[16/10]',
     alt: 'Aga Khan High School',
-    caption: 'Entrepreneruship Expo, Aga Khan High School 2022',
+    caption: 'Entrepreneurship Expo, Aga Khan High School — 2022',
   },
   {
     image: pic14,
     ratio: 'aspect-[16/10]',
     alt: 'Aga Khan High School',
-    caption: 'VoteAble Election day, Aga Khan High School 2023',
+    caption: 'VoteAble Election Day, Aga Khan High School — 2023',
   },
+  {
+    image: pic1,
+    ratio: 'aspect-[4/3]',
+    alt: 'VoteAble election day, Aga Khan High School',
+    caption: 'VoteAble Election Day, Aga Khan High School — 2024',
+  },
+  {
+    image: pic20,
+    ratio: 'aspect-[16/10]',
+    alt: 'Graduation with an IB Diploma, Aga Khan High School 2025',
+    caption: 'Graduation with an IB Diploma, Aga Khan High School — 2025',
+  },
+  {
+    image: pic2,
+    ratio: 'aspect-[3/2]',
+    alt: 'VoteAble election day, Aga Khan High School',
+    caption: 'VoteAble Election Day, Aga Khan High School — 2024',
+  },
+  {
+    image: pic3,
+    ratio: 'aspect-[16/10]',
+    alt: 'VoteAble election day, Aga Khan High School',
+    caption: 'VoteAble Election Day, Aga Khan High School — 2024',
+  },
+  {
+    image: pic15,
+    ratio: 'aspect-[16/10]',
+    alt: 'Baylor University, Waco, Texas',
+    caption:
+      'With my best friends at a Students of East Africa meet-up, Baylor University, Waco, Texas — 2025',
+  },
+  {
+    image: pic4,
+    ratio: 'aspect-[4/3]',
+    alt: 'VoteAble election day, Aga Khan High School',
+    caption: 'VoteAble Election Day, Aga Khan High School — 2024',
+  },
+  //   {
+  //     image: pic21,
+  //     ratio: 'aspect-[16/10]',
+  //     alt: 'Graduation with an IB Diploma, Aga Khan High School 2025',
+  //     caption: 'Graduation with an IB Diploma, Aga Khan High School — 2025',
+  //   },
 ];
 
 const bottomRow = [
@@ -78,43 +98,76 @@ const bottomRow = [
     image: pic6,
     ratio: 'aspect-[16/10]',
     alt: 'Aga Khan High School',
-    caption: 'Entrepreneruship Expo, Aga Khan High School 2022',
+    caption: 'Entrepreneurship Expo, Aga Khan High School — 2022',
   },
   {
     image: pic7,
     ratio: 'aspect-[16/10]',
     alt: 'Aga Khan High School',
-    caption: 'VoteAble Election day, Aga Khan High School 2023',
+    caption: 'VoteAble Election Day, Aga Khan High School — 2023',
+  },
+  {
+    image: pic5,
+    ratio: 'aspect-[3/2]',
+    alt: 'Aga Khan High School',
+    caption: 'VoteAble Election Day, Aga Khan High School — 2024',
+  },
+  {
+    image: pic16,
+    ratio: 'aspect-[16/10]',
+    alt: 'Baylor University, Waco, Texas',
+    caption:
+      'Picture with Students of East Africa club members, Baylor University, Waco, Texas — 2025',
   },
   {
     image: pic8,
     ratio: 'aspect-[16/10]',
     alt: 'Aga Khan High School',
-    caption: 'VoteAble Election day, Aga Khan High School 2024',
+    caption: 'VoteAble Election Day, Aga Khan High School — 2024',
   },
   {
     image: pic9,
     ratio: 'aspect-[16/10]',
     alt: 'Aga Khan High School',
-    caption: 'VoteAble Election day, Aga Khan High School 2024',
+    caption: 'VoteAble Election Day, Aga Khan High School — 2024',
+  },
+  {
+    image: pic17,
+    ratio: 'aspect-[16/10]',
+    alt: 'Baylor University, Waco, Texas',
+    caption:
+      'Picture with Students of East Africa club members, Baylor University, Waco, Texas — 2025',
   },
   {
     image: pic10,
     ratio: 'aspect-[16/10]',
     alt: 'Aga Khan High School',
-    caption: 'VoteAble Election day, Aga Khan High School 2024',
+    caption: 'VoteAble Election Day, Aga Khan High School — 2024',
   },
   {
     image: pic11,
     ratio: 'aspect-[16/10]',
     alt: 'Aga Khan High School',
-    caption: 'VoteAble Election day, Aga Khan High School 2024',
+    caption: 'VoteAble Election Day, Aga Khan High School — 2024',
+  },
+  {
+    image: pic18,
+    ratio: 'aspect-[16/10]',
+    alt: 'Baylor University, Waco, Texas',
+    caption:
+      'Picture with Students of East Africa club members, Baylor University, Waco, Texas — 2025',
   },
   {
     image: pic12,
     ratio: 'aspect-[16/10]',
     alt: 'Aga Khan High School',
-    caption: 'VoteAble Election day, Aga Khan High School 2023',
+    caption: 'VoteAble Election Day, Aga Khan High School — 2023',
+  },
+  {
+    image: pic19,
+    ratio: 'aspect-[16/10]',
+    alt: 'Baylor University, Waco, Texas',
+    caption: 'Picture with co-founders of Cadera Cloud Solutions Ltd',
   },
 ];
 
@@ -261,12 +314,8 @@ const AgaKhanGallery = ({ sectionRef }) => {
           </h2>
           <div className="flex items-center gap-2 border-t border-[#DDD8CC] pt-3">
             <span className="font-[JetBrains_Mono] text-[11px] uppercase tracking-[0.06em] text-[#706D66]">
-              A record of my work with Aga Khan High School, from building
-              VoteAble
-              <br /> to taking the initiative to run its elections while I was
-              still a student. <br />
-              Today, I oversee a team I established to carry the work forward in
-              my absence.
+              A visual record of the work, places, and experiences that have
+              shaped my journey so far.
             </span>
           </div>
         </div>
