@@ -20,20 +20,38 @@ import pic17 from '../../assets/uni-pic3.jpg';
 import pic18 from '../../assets/uni-pic4.png';
 import pic19 from '../../assets/cadera-founders.jpg';
 import pic20 from '../../assets/grad-pic1.jpg';
-import pic21 from '../../assets/grad-pic2.jpg';
 
 import { gsap, ScrollTrigger, prefersReducedMotion } from '../../lib/gsap';
 
 /**
  * Civic Impact Gallery — Aga Khan High School Election Deployment
  *
- * The marquee is now GSAP-driven instead of CSS keyframes, which buys
- * three things the CSS version couldn't do:
- *  - the rows speed up with your scroll velocity and settle back to
- *    their cruise speed, so the gallery answers the scroll
- *  - the tweens pause entirely when the section is off screen
- *  - hover pauses smoothly rather than freezing mid-frame
+ * Two GSAP-driven marquee rows.
+ *
+ * How it behaves:
+ *  - Each row is three identical groups; the track shifts by exactly one
+ *    group's width (1/3) per loop, so the repeat is seamless. Every group
+ *    carries trailing padding equal to the flex gap, so the three groups are
+ *    exactly equal in width.
+ *  - Play/pause is driven by an IntersectionObserver, which reads live layout.
+ *    (Precomputed ScrollTrigger ranges go stale on mobile when fonts, lazy
+ *    images or the collapsing address bar shift the layout, which is what used
+ *    to leave the rows paused.)
+ *  - Scroll velocity temporarily speeds the rows up, then eases back.
+ *  - Hover pauses a row smoothly, on devices with a real hover pointer only.
+ *    Speed is composed as (scroll boost × hover factor), so scrolling while
+ *    hovering never un-pauses the hovered row.
+ *  - With prefers-reduced-motion, nothing animates and each row becomes a
+ *    normal horizontally scrollable strip.
  */
+
+// The track holds three identical groups, so one loop is one third of it.
+const LOOP_SHIFT = -100 / 3;
+const COPIES = [0, 1, 2];
+
+// Scroll-velocity boost tuning.
+const MAX_BOOST = 3.5;
+const VELOCITY_DIVISOR = 1400;
 
 const topRow = [
   {
@@ -85,12 +103,6 @@ const topRow = [
     alt: 'VoteAble election day, Aga Khan High School',
     caption: 'VoteAble Election Day, Aga Khan High School — 2024',
   },
-  //   {
-  //     image: pic21,
-  //     ratio: 'aspect-[16/10]',
-  //     alt: 'Graduation with an IB Diploma, Aga Khan High School 2025',
-  //     caption: 'Graduation with an IB Diploma, Aga Khan High School — 2025',
-  //   },
 ];
 
 const bottomRow = [
@@ -173,7 +185,7 @@ const bottomRow = [
 
 const Plate = ({ item }) => (
   <div
-    className={`group relative h-full flex-shrink-0 cursor-default border border-[#DDD8CC] bg-white p-1.5 ${item.ratio}`}
+    className={`group relative h-full shrink-0 cursor-default border border-[#DDD8CC] bg-white p-1.5 ${item.ratio}`}
   >
     <div className="relative h-full w-full overflow-hidden">
       <img
@@ -181,7 +193,8 @@ const Plate = ({ item }) => (
         alt={item.alt}
         loading="lazy"
         decoding="async"
-        className="h-full w-full object-cover grayscale-[25%] transition-opacity duration-500 group-hover:opacity-0"
+        draggable={false}
+        className="h-full w-full object-cover transition-opacity duration-500 group-hover:opacity-0 sm:grayscale-[25%]"
       />
       <div className="absolute inset-0 flex items-center justify-center bg-white px-5 text-center opacity-0 transition-opacity duration-500 group-hover:opacity-100">
         <p className="max-w-[26ch] font-[Newsreader] text-[15px] font-light italic leading-snug text-[#181614] sm:text-[17px]">
@@ -193,16 +206,34 @@ const Plate = ({ item }) => (
 );
 
 const Row = ({ items, direction, duration }) => (
-  <div data-marquee-viewport className="h-full overflow-hidden">
+  <div
+    data-marquee-viewport
+    className="h-full touch-pan-y overflow-hidden motion-reduce:touch-auto motion-reduce:overflow-x-auto"
+  >
     <div
       data-marquee
       data-direction={direction}
       data-duration={duration}
-      className="flex h-full w-max gap-4 lg:gap-6"
+      className="flex h-full w-max will-change-transform"
     >
-      {/* Tripled so a -33.333% shift loops seamlessly. */}
-      {[...items, ...items, ...items].map((item, i) => (
-        <Plate key={`${direction}-${i}`} item={item} />
+      {/*
+        Three identical groups. Each has trailing padding equal to the gap,
+        so a group is exactly 1/3 of the track and the loop is seamless.
+        Duplicates are hidden from assistive tech, and dropped entirely
+        when the visitor prefers reduced motion (the row is scrollable then).
+      */}
+      {COPIES.map((copy) => (
+        <div
+          key={copy}
+          aria-hidden={copy > 0 ? true : undefined}
+          className={`flex h-full shrink-0 gap-4 pr-4 lg:gap-6 lg:pr-6 ${
+            copy > 0 ? 'motion-reduce:hidden' : ''
+          }`}
+        >
+          {items.map((item, i) => (
+            <Plate key={`${direction}-${copy}-${i}`} item={item} />
+          ))}
+        </div>
       ))}
     </div>
   </div>
@@ -218,7 +249,7 @@ const AgaKhanGallery = ({ sectionRef }) => {
     const ctx = gsap.context((self) => {
       const q = self.selector;
 
-      // Heading
+      // Heading reveal
       gsap.from(q('[data-gallery-head] > *'), {
         opacity: 0,
         y: 24,
@@ -230,64 +261,120 @@ const AgaKhanGallery = ({ sectionRef }) => {
         },
       });
 
-      // Marquee tracks
+      // Marquee loops
       const tracks = q('[data-marquee]');
       const loops = tracks.map((track) => {
         const forward = track.dataset.direction !== 'right';
         const duration = Number(track.dataset.duration) || 40;
 
-        gsap.set(track, { xPercent: forward ? 0 : -33.333 });
+        gsap.set(track, { xPercent: forward ? 0 : LOOP_SHIFT });
 
         return gsap.to(track, {
-          xPercent: forward ? -33.333 : 0,
+          xPercent: forward ? LOOP_SHIFT : 0,
           duration,
           ease: 'none',
           repeat: -1,
         });
       });
 
-      // Hover pause, per row.
-      const listeners = [];
-      q('[data-marquee-viewport]').forEach((viewport, i) => {
-        const loop = loops[i];
-        if (!loop) return;
-        const pause = () => gsap.to(loop, { timeScale: 0, duration: 0.4 });
-        const resume = () => gsap.to(loop, { timeScale: 1, duration: 0.6 });
-        viewport.addEventListener('mouseenter', pause);
-        viewport.addEventListener('mouseleave', resume);
-        listeners.push([viewport, pause, resume]);
-      });
+      // Speed = scroll boost × per-row hover factor. Keeping them separate
+      // means a scroll boost can never override a hover pause (or vice versa).
+      const boost = { value: 1 };
+      const hover = loops.map(() => ({ value: 1 }));
+      const applySpeed = () =>
+        loops.forEach((loop, i) =>
+          loop.timeScale(boost.value * hover[i].value),
+        );
 
-      // Only run while visible, and let scroll velocity drive the speed.
-      const boost = gsap.utils.clamp(1, 3.5);
+      // Hover pause, only on devices with a real hover pointer. On touch
+      // screens mouseenter fires on tap without a matching mouseleave.
+      const supportsHover = window.matchMedia(
+        '(hover: hover) and (pointer: fine)',
+      ).matches;
+
+      const listeners = [];
+      if (supportsHover) {
+        q('[data-marquee-viewport]').forEach((viewport, i) => {
+          const state = hover[i];
+          if (!state) return;
+          const pause = () =>
+            gsap.to(state, {
+              value: 0,
+              duration: 0.4,
+              overwrite: true,
+              onUpdate: applySpeed,
+            });
+          const resume = () =>
+            gsap.to(state, {
+              value: 1,
+              duration: 0.6,
+              overwrite: true,
+              onUpdate: applySpeed,
+            });
+          viewport.addEventListener('mouseenter', pause);
+          viewport.addEventListener('mouseleave', resume);
+          listeners.push([viewport, pause, resume]);
+        });
+      }
+
+      // Play/pause on REAL visibility. IntersectionObserver reads live
+      // layout, so it can't drift like precomputed ScrollTrigger ranges.
+      // The small rootMargin starts the rows just before they scroll in.
+      const stage = q('[data-marquee-stage]')[0] || root;
+      let visible = true;
+      let io;
+      if (typeof IntersectionObserver !== 'undefined') {
+        io = new IntersectionObserver(
+          (entries) => {
+            visible = entries[entries.length - 1].isIntersecting;
+            loops.forEach((loop) => loop.paused(!visible));
+          },
+          { rootMargin: '150px 0px' },
+        );
+        io.observe(stage);
+      }
+
+      // Scroll-velocity boost.
+      const clampBoost = gsap.utils.clamp(1, MAX_BOOST);
+      let lastY = window.scrollY;
+      let lastT = performance.now();
       let settle;
 
-      ScrollTrigger.create({
-        trigger: root,
-        start: 'top bottom',
-        end: 'bottom top',
-        onToggle: (st) =>
-          loops.forEach((loop) => (st.isActive ? loop.play() : loop.pause())),
-        onUpdate: (st) => {
-          const target = boost(1 + Math.abs(st.getVelocity()) / 1400);
-          loops.forEach((loop) =>
-            gsap.to(loop, {
-              timeScale: target,
-              duration: 0.2,
-              overwrite: true,
-            }),
-          );
-          settle?.kill();
-          settle = gsap.delayedCall(0.3, () => {
-            loops.forEach((loop) =>
-              gsap.to(loop, { timeScale: 1, duration: 0.9, overwrite: true }),
-            );
-          });
-        },
-      });
+      const onScroll = () => {
+        const now = performance.now();
+        const y = window.scrollY;
+        const velocity =
+          (Math.abs(y - lastY) / Math.max(now - lastT, 1)) * 1000;
+        lastY = y;
+        lastT = now;
+        if (!visible) return;
 
-      return () => {
+        gsap.to(boost, {
+          value: clampBoost(1 + velocity / VELOCITY_DIVISOR),
+          duration: 0.2,
+          overwrite: true,
+          onUpdate: applySpeed,
+        });
+
         settle?.kill();
+        settle = gsap.delayedCall(0.3, () => {
+          gsap.to(boost, {
+            value: 1,
+            duration: 0.9,
+            overwrite: true,
+            onUpdate: applySpeed,
+          });
+        });
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+
+      // Runs on ctx.revert(). Tweens/listeners created after setup
+      // (event handlers) aren't tracked by the context, so clean them here.
+      return () => {
+        io?.disconnect();
+        window.removeEventListener('scroll', onScroll);
+        settle?.kill();
+        gsap.killTweensOf([boost, ...hover]);
         listeners.forEach(([viewport, pause, resume]) => {
           viewport.removeEventListener('mouseenter', pause);
           viewport.removeEventListener('mouseleave', resume);
@@ -302,6 +389,7 @@ const AgaKhanGallery = ({ sectionRef }) => {
     <section
       id="gallery"
       ref={sectionRef}
+      aria-labelledby="gallery-heading"
       className="box-border w-full border-b border-[#DDD8CC] bg-[#EFECE4] py-[clamp(4rem,9vh,7rem)]"
     >
       <div ref={rootRef}>
@@ -309,7 +397,10 @@ const AgaKhanGallery = ({ sectionRef }) => {
           data-gallery-head
           className="mx-auto mb-[clamp(2.5rem,4vw,3rem)] flex w-full max-w-[1280px] flex-col gap-6 px-[clamp(1.5rem,5vw,3rem)]"
         >
-          <h2 className="max-w-[680px] font-[Newsreader] text-[clamp(2rem,4.2vw,2.75rem)] font-light leading-[1.05] tracking-[-0.02em] text-[#181614]">
+          <h2
+            id="gallery-heading"
+            className="max-w-[680px] font-[Newsreader] text-[clamp(2rem,4.2vw,2.75rem)] font-light leading-[1.05] tracking-[-0.02em] text-[#181614]"
+          >
             Gallery
           </h2>
           <div className="flex items-center gap-2 border-t border-[#DDD8CC] pt-3">
@@ -320,7 +411,10 @@ const AgaKhanGallery = ({ sectionRef }) => {
           </div>
         </div>
 
-        <div className="relative w-full overflow-hidden border-y border-[#DDD8CC]">
+        <div
+          data-marquee-stage
+          className="relative w-full overflow-hidden border-y border-[#DDD8CC]"
+        >
           <div className="flex flex-col gap-4 py-6 sm:gap-6 sm:py-8">
             <div className="h-[180px] sm:h-[240px] lg:h-[300px]">
               <Row items={topRow} direction="left" duration={38} />
@@ -329,10 +423,6 @@ const AgaKhanGallery = ({ sectionRef }) => {
               <Row items={bottomRow} direction="right" duration={44} />
             </div>
           </div>
-
-          {/* Edge vignettes */}
-          {/* <div className="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-[#EFECE4] to-transparent sm:w-20" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-[#EFECE4] to-transparent sm:w-20" /> */}
         </div>
       </div>
     </section>
