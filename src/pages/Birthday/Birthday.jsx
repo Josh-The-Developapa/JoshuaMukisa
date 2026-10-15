@@ -1,64 +1,223 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   motion,
   AnimatePresence,
   useScroll,
-  useTransform,
   useInView,
+  useSpring,
 } from 'framer-motion';
-import Pic1 from '../../assets/pic-1.jpeg';
-import Pic7 from '../../assets/pic-7.jpg';
-import Pic9 from '../../assets/pic-9.jpg';
-import Pic10 from '../../assets/pic-10.jpg';
-import Pic11 from '../../assets/pic-11.jpg';
-import Pic12 from '../../assets/pic-12.jpg';
-import Pic13 from '../../assets/pic-13.jpg';
-import Pic14 from '../../assets/pic-14.jpg';
-import Pic15 from '../../assets/pic-15.jpg';
-import Pic16 from '../../assets/pic-41.jpg';
-import Pic17 from '../../assets/pic-17.jpeg';
-import Pic18 from '../../assets/pic-18.jpg';
-import Pic19 from '../../assets/pic-19.jpg';
-import Pic20 from '../../assets/pic-20.jpg';
-import Pic21 from '../../assets/pic-21.jpg';
-import Pic22 from '../../assets/pic-22.jpg';
-import Pic23 from '../../assets/pic-23.jpg';
-import Pic24 from '../../assets/pic-24.jpg';
-import Pic25 from '../../assets/pic-25.jpg';
-import Pic26 from '../../assets/pic-26.png';
-import Pic27 from '../../assets/pic-27.png';
-import Pic28 from '../../assets/pic-28.png';
-import Pic29 from '../../assets/pic-29.jpg';
-import Pic30 from '../../assets/pic-30.jpg';
-import Pic31 from '../../assets/pic-31.jpg';
-import Pic32 from '../../assets/pic-32.jpg';
-import Pic33 from '../../assets/pic-40.jpg';
-import Pic34 from '../../assets/pic-34.jpg';
-import Pic35 from '../../assets/pic-35.jpg';
-import Pic36 from '../../assets/pic-50.jpg';
-import Pic37 from '../../assets/pic-37.jpg';
-import Pic38 from '../../assets/pic-38.jpg';
-import Pic39 from '../../assets/pic-39.jpg';
-import Pic40 from '../../assets/pic-40.jpg';
-import Pic41 from '../../assets/pic-41.jpg';
-import Pic42 from '../../assets/pic-42.jpg';
-import Pic43 from '../../assets/pic-43.jpg';
-import Pic44 from '../../assets/pic-44.jpg';
-import Pic45 from '../../assets/pic-45.jpg';
-import Pic46 from '../../assets/pic-47.jpg';
-import Pic50 from '../../assets/pic-60.jpg';
-import Pic70 from '../../assets/pic-70.jpg';
 
-/* ─── Reveal on scroll ─── */
-function Reveal({ children, delay = 0, y = 40, className = '' }) {
+/* ─────────────────────────────────────────────
+   PHOTO SLOTS
+   Every slot has its own name so you know exactly
+   what to drop in. Swap the imports, nothing else changes.
+────────────────────────────────────────────── */
+import Pic7 from '../../assets/pic-7.jpg';
+import Pic10 from '../../assets/pic-10.jpg';
+import Pic14 from '../../assets/pic-14.jpg';
+import Pic12 from '../../assets/pic-12.jpg';
+import Pic34 from '../../assets/img-2.jpg';
+import Pic35 from '../../assets/img-3.jpg';
+import Pic70 from '../../assets/pic-11.jpg';
+import Pic60 from '../../assets/img-6.jpg';
+import Pic1 from '../../assets/img-1.jpg';
+import Pic15 from '../../assets/pic-13.jpg';
+import Pic22 from '../../assets/pic-39.jpg';
+import Pic23 from '../../assets/img-4.jpg';
+import Pic29 from '../../assets/img-5.jpg';
+import Pic30 from '../../assets/pic-10.jpg';
+
+// Slot labels are for editing only. Keep false for the real thing.
+const SHOW_SLOT_LABELS = false;
+
+const PHOTOS = {
+  // PROLOGUE: revealed inside the merged circle. Portrait-ish photo of both of you works best.
+  hero_us: Pic1,
+
+  // ACT I: where it began
+  actI_firstDays: Pic7,
+  actI_herSmile: Pic10,
+
+  // ACT II: the distance
+  actII_beforeYouLeft: Pic34,
+  actII_you: Pic35,
+
+  // ACT III: the fire
+  actIII_quiet: Pic12,
+
+  // ACT IV: the vow
+  actIV_her: Pic70,
+  actIV_us: Pic60,
+
+  // EPILOGUE
+  epilogue_us: Pic1,
+
+  // Gallery strip, six good moments.
+  gallery: [Pic14, Pic15, Pic22, Pic23, Pic29, Pic30],
+};
+
+/* ─── palette: flat only, no gradients ─── */
+const C = {
+  paper: '#F2EADB',
+  ink: '#1C1A18',
+  clay: '#C65A3C',
+  pine: '#2E4638',
+  sun: '#E3A93A',
+};
+
+const SERIF = "'Cormorant Garamond', serif";
+const MONO = "'DM Mono', monospace";
+const EASE = [0.22, 1, 0.36, 1];
+
+/* ─────────────────────────────────────────────
+   COPY
+   A plain string is a normal paragraph.
+   { q: '...' } is set larger, as a pull line.
+────────────────────────────────────────────── */
+const PROLOGUE_LINE =
+  'Some words cannot be taken back. But they can be acknowledged, and the person who said them can choose to do better.';
+
+const PROLOGUE = [
+  "Baby, this is something I made because I wanted to tell you what I haven't been able to express properly. Not to win an argument, not to erase what happened, and not to pressure you into forgiving me.",
+  'I want to take responsibility for the way I spoke to you, to remember some of the things that have made our relationship special to me, and to tell you honestly what you mean to me.',
+  {
+    q: 'You deserve an apology that is about more than how I feel after hurting you. So this is me trying to give you one.',
+  },
+];
+
+const ACT_ONE = [
+  'We started with an Instagram DM, baby. You reached out without knowing what would come of it, and eventually I replied. Somehow, that little conversation became something I would come to care about so deeply.',
+  'I still remember wondering where you got the audacity to tell me to ask you for your number. I remember those fat paragraphs you would send me about your day, how you would come to me for advice, and how much I loved hearing you talk. I remember noticing your big eyes, too. You already had those huge eyes like mine, except yours were muchhhhh bigger.',
+  "I miss those little things sometimes. The way we could talk about absolutely anything, the way you would tell me what was happening in your world, and the feeling that we were slowly becoming part of each other's everyday lives.",
+  'You came into my life during a season when I was carrying a lot. I was dealing with painful things in my family, trying to find my footing, and figuring out how to keep moving forward. Being with you brought joy into days that had become very heavy.',
+  'You made me laugh. You gave me something to look forward to. You reminded me that life could still hold beautiful things, even when other parts of it were hurting.',
+  "I don't want to put the responsibility for my happiness on you, baby. That was never supposed to be your burden. But I want you to know that the happiness we shared was real to me, and that I will always be grateful for the moments when we made each other's lives a little brighter.",
+  'When I think about us at the beginning, I remember two people who were excited to know each other. Two people who wanted to share their days, their thoughts, their little jokes, and their lives.',
+  {
+    q: 'I wish I had protected that tenderness better, especially when things became difficult.',
+  },
+];
+
+const ACT_TWO = [
+  "Then life changed. Distance became part of our relationship, and so did pressures, disappointments, misunderstandings, and hurts that we didn't always know how to handle.",
+  'Things that once felt natural became difficult. Sometimes we struggled to understand each other. Sometimes we both carried feelings that came out in ways that made it harder to feel close.',
+  "I won't pretend that everything between us has been beautiful. We have hurt each other, and there are things between us that still need honesty, understanding, and healing. I have had my own pain, and there have been moments when I didn't know what to do with it.",
+  {
+    q: 'But I want to acknowledge something about myself: being hurt does not give me permission to hurt you back.',
+  },
+  "I have sometimes allowed my frustration to build until it came out as anger. I've wanted to be understood so badly that I haven't always stopped to consider how my words would make you feel. And when I felt disappointed or afraid of losing you, I sometimes spoke from that pain instead of speaking with the care you deserved.",
+  'I wish I had handled those moments differently.',
+  'Our relationship has been through a lot, and I know that loving each other does not automatically make us good at loving each other. We have to learn how to communicate, how to listen, and how to disagree without tearing each other down.',
+  'I still care about what we shared, Monica. I still believe that the good moments mattered, even though we have also had painful ones.',
+  "I don't want to rewrite our history as though nothing good happened. And I don't want to pretend the painful parts never happened, either.",
+  { q: 'I want to learn from them.' },
+];
+
+const ACT_THREE = [
+  'Baby, I am genuinely sorry for the things I said to you and for how harshly I spoke to you.',
+  'I know my words were hurtful. I know that when someone you love speaks to you with cruelty, it can make you question how they see you, how they value you, and whether the love they tell you about is still there when things become difficult.',
+  'I hate knowing that I may have made you feel that way.',
+  'You did not deserve to be spoken to like that, Mami. Not by me. Not by someone who tells you that he loves you, who talks about a future with you, and who wants you to feel safe enough to be yourself around him.',
+  "I was frustrated. I was hurt. I had feelings that I didn't know how to handle properly in that moment. But those are explanations for what was happening inside me, not excuses for what I chose to say.",
+  { q: 'I was responsible for my words, and I am sorry for them.' },
+  "I am also sorry if the way I expressed my anger made it harder for you to tell me when you were hurting. I don't want you to feel that opening up to me will automatically lead to another argument, that you have to hide your feelings to keep the peace, or that I will use your vulnerability against you.",
+  'I want to become someone who can hear difficult things without immediately reacting in a way that makes everything worse.',
+  "I cannot undo the messages you read. I cannot ask you to forget them simply because I regret sending them. And I know that an apology doesn't automatically undo the hurt it causes.",
+  'All I can do is acknowledge what I did, tell you sincerely that I am sorry, and take responsibility for how I treat you going forward.',
+  { q: 'I am sorry, Monica. Truly.' },
+  'You deserved more care from me in that moment, and I wish I had given it to you.',
+];
+
+const INTERLUDE = [
+  "These pictures don't tell the whole story of us. No collection of photographs could.",
+  'But they remind me of moments when we were happy, when we laughed, when being together felt simple, and when I was grateful that our paths had crossed.',
+  "I don't look at them and think that we never had problems. I look at them and remember that there was genuine affection here, that we shared things I will always value, and that you have been an important part of my life.",
+  'Thank you for those moments, baby. For the laughter, the memories, the conversations, the closeness, and all the little things that might have seemed ordinary at the time but became special because they were ours.',
+];
+
+const VOW_INTRO = [
+  'I cannot promise that we will never disagree, that I will always know the right thing to say, or that we will never have difficult days.',
+  'But I can take responsibility for the way I respond when those days come.',
+  "I don't want an apology to be something beautiful that I write once and then forget when I get upset again. I want it to mean something in the way I treat you, especially when I am frustrated.",
+  'Here is what I want to work on.',
+];
+
+const VOWS = [
+  {
+    g: 'circle',
+    c: C.sun,
+    t: 'I will be more careful with my words.',
+    d: 'I will not use insults, degrading language, or personal attacks to express how hurt I am. I can tell you that something has upset me without trying to hurt you in return.',
+  },
+  {
+    g: 'half',
+    c: C.paper,
+    t: 'I will try to pause before reacting.',
+    d: "When I feel myself becoming overwhelmed, I want to learn to step back, collect myself, and return to the conversation more calmly. I don't want every painful moment to become a bigger wound.",
+  },
+  {
+    g: 'tri',
+    c: C.sun,
+    t: 'I will communicate instead of escalating.',
+    d: 'I want to get better at saying what I feel and what I need without turning the conversation into a fight. I want to listen to understand you, not simply wait for my turn to explain myself.',
+  },
+  {
+    g: 'square',
+    c: C.paper,
+    t: 'I will respect your feelings, even when they are difficult for me to hear.',
+    d: "You don't have to experience things exactly as I do for your feelings to matter. I want to make room for your perspective without immediately becoming defensive.",
+  },
+  {
+    g: 'diamond',
+    c: C.sun,
+    t: 'I will let my actions support my apologies.',
+    d: 'I know that saying sorry is only the beginning. If I want you to believe that I am learning, you should be able to see that learning in how I behave over time.',
+  },
+];
+
+const VOW_OUTRO = [
+  'These are things I want to practise, not promises I expect you to accept without question. I know I have to live them.',
+  'I also hope that if we choose to work on our relationship, we can both learn to approach difficult conversations with more honesty, care, and accountability. I want a relationship where neither of us has to be perfect, but both of us are willing to take responsibility for the ways we cause hurt.',
+  {
+    q: 'I want us to feel like we are on the same side, even when we disagree.',
+  },
+];
+
+const HOPE = [
+  'There are things in my heart that I would like to share with you, and there are things in yours that I would like to understand better.',
+  'I know we have both experienced pain in this relationship. I know there have been times when we have struggled to understand what the other person was feeling, and times when our attempts to protect ourselves have only made us feel further apart.',
+  'I would like us to have an honest conversation about those things one day. Not to decide who is the worse person, not to keep score, and not to make either of us carry all the blame.',
+  'I want to understand your fears, the things that hurt you, and the things you may have struggled to express. I would also like you to understand the things that have hurt me and what I need from a relationship to feel loved, respected, and secure.',
+  'I hope we can listen to each other without turning vulnerability into ammunition.',
+  "But I understand that you may need time, and that you may not be ready to have that conversation now. I don't want this apology to become another demand placed on you.",
+  {
+    q: 'You are allowed to have your own feelings about what happened. You are allowed to take your time. And you are allowed to decide what you want.',
+  },
+  'I wanted to start by taking responsibility for my part. The rest, if we both want to explore it, deserves its own honest conversation.',
+];
+
+const EPILOGUE = [
+  'For the words I chose. For the hurt I caused. For the moments when my frustration spoke louder than the love and care I wanted you to feel from me.',
+  'I am sorry for yesterday, baby. I wish I had handled things differently, and I wish I had spoken to you with the tenderness you deserved, even when I was hurting.',
+  "I still love you, Monica. That is the truth, and I don't want to pretend otherwise. You have been part of so many important moments in my life, and what we have shared means a great deal to me.",
+  'I still think about the future we talked about. I still remember the little things that made me fall for you. And part of me still hopes that we can find a healthier way to love each other, if that is something we both genuinely want.',
+  'But I know that love cannot erase hurt by itself. It has to be accompanied by honesty, respect, patience, and actions that match the words we say.',
+  'I am not asking you to forget what happened because I made you a page. I am not asking you to give me an answer before you are ready. And I am not expecting you to believe that everything will change because I have written these words.',
+  'I just wanted you to know that I recognise the way I hurt you, that I regret it, and that I want to do better.',
+  'If you feel comfortable talking to me, I would be grateful for the chance to listen to you and to share what is in my heart, too. If you need time first, I will respect that.',
+  'Whatever happens next, I want this apology to be sincere in its own right.',
+];
+
+/* ─── helpers ─── */
+function Reveal({ children, delay = 0, y = 36, className = '' }) {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
+  const inView = useInView(ref, { once: true, margin: '-70px' });
   return (
     <motion.div
       ref={ref}
       initial={{ opacity: 0, y }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.8, delay, ease: EASE }}
       className={className}
     >
       {children}
@@ -66,1117 +225,853 @@ function Reveal({ children, delay = 0, y = 40, className = '' }) {
   );
 }
 
-/* ─── Horizontal Marquee ─── */
-function Marquee({ images, speed = 35, reverse = false }) {
-  const doubled = [...images, ...images];
+/* Renders the copy arrays above. */
+function Paras({ items, accent, align = 'left' }) {
   return (
-    <div className="overflow-hidden w-full">
-      <div
-        className="flex gap-4 w-max"
-        style={{
-          animation: `marquee-slide ${speed}s linear infinite ${reverse ? 'reverse' : ''}`,
-        }}
-      >
-        {doubled.map((src, i) => (
-          <div
+    <>
+      {items.map((item, i) =>
+        typeof item === 'string' ? (
+          <p key={i}>{item}</p>
+        ) : (
+          <p
             key={i}
-            className="flex-shrink-0 h-52 md:h-72 w-40 md:w-56 rounded-2xl overflow-hidden border-2 border-gold/30 shadow-xl"
-          >
-            <img
-              src={src}
-              alt=""
-              className="h-full w-full object-cover"
-              draggable={false}
-            />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ─── Mobile swipe carousel ─── */
-function SwipeCarousel({ images, intervalMs = 4000 }) {
-  const [[cur, dir], setPage] = useState([0, 1]);
-  const timer = useRef(null);
-  const dragX = useRef(0);
-  const n = images.length;
-
-  const go = useCallback((idx, d) => setPage([((idx % n) + n) % n, d]), [n]);
-
-  const resetTimer = useCallback(() => {
-    clearInterval(timer.current);
-    timer.current = setInterval(
-      () => setPage(([c]) => [(c + 1) % n, 1]),
-      intervalMs,
-    );
-  }, [n, intervalMs]);
-
-  useEffect(() => {
-    resetTimer();
-    return () => clearInterval(timer.current);
-  }, [resetTimer]);
-
-  const variants = {
-    enter: (d) => ({ x: d > 0 ? '100%' : '-100%', opacity: 0 }),
-    center: { x: 0, opacity: 1 },
-    exit: (d) => ({ x: d > 0 ? '-60%' : '60%', opacity: 0 }),
-  };
-
-  return (
-    <div className="md:hidden w-full select-none">
-      <div
-        className="relative w-full aspect-[4/3] overflow-hidden rounded-2xl border-2 border-gold/40 shadow-2xl"
-        onTouchStart={(e) => (dragX.current = e.touches[0].clientX)}
-        onTouchEnd={(e) => {
-          const d = dragX.current - e.changedTouches[0].clientX;
-          if (Math.abs(d) > 40) {
-            d > 0 ? go(cur + 1, 1) : go(cur - 1, -1);
-            resetTimer();
-          }
-        }}
-        style={{ touchAction: 'pan-y' }}
-      >
-        <AnimatePresence initial={false} custom={dir}>
-          <motion.div
-            key={cur}
-            custom={dir}
-            variants={variants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{ duration: 0.45, ease: [0.32, 0.72, 0, 1] }}
-            className="absolute inset-0"
-          >
-            <img
-              src={images[cur]}
-              alt=""
-              draggable={false}
-              className="w-full h-full object-cover"
-            />
-          </motion.div>
-        </AnimatePresence>
-      </div>
-      <div className="flex justify-center gap-2 mt-3">
-        {images.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => {
-              go(i, i > cur ? 1 : -1);
-              resetTimer();
-            }}
+            className="pl-5 italic text-2xl md:text-3xl leading-snug"
             style={{
-              width: i === cur ? 24 : 8,
-              height: 8,
-              borderRadius: 999,
-              background: i === cur ? '#c9a84c' : '#c9a84c44',
-              transition: 'all 0.3s ease',
-              border: 'none',
-              padding: 0,
-              outline: 'none',
+              borderLeft: `3px solid ${accent}`,
+              textAlign: align,
             }}
-          />
-        ))}
-      </div>
-    </div>
+          >
+            {item.q}
+          </p>
+        ),
+      )}
+    </>
   );
 }
 
-/* ─── Polaroid card ─── */
-function Polaroid({ src, rotate = 0, label = '' }) {
+/* Every photo frame is a square. */
+function Frame({ slot, src, className = '', tint, alt = '' }) {
+  const image = src || PHOTOS[slot];
   return (
     <div
-      className="bg-[#1a1a1a] p-3 pb-8 shadow-2xl border border-white/5"
-      style={{ transform: `rotate(${rotate}deg)`, transformOrigin: 'center' }}
+      className={`relative overflow-hidden aspect-square ${className}`}
+      style={{ background: tint || C.ink }}
     >
-      <div className="w-full aspect-square overflow-hidden">
-        <img src={src} alt="" className="w-full h-full object-cover" />
-      </div>
-      {label && (
-        <p className="text-center text-[#c9a84c] text-xs mt-3 font-light tracking-widest uppercase">
-          {label}
-        </p>
+      <img
+        src={image}
+        alt={alt}
+        className="w-full h-full object-cover"
+        draggable={false}
+      />
+      {SHOW_SLOT_LABELS && slot && (
+        <span
+          className="absolute bottom-3 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] tracking-wider whitespace-nowrap"
+          style={{ background: C.sun, color: C.ink, fontFamily: MONO }}
+        >
+          {slot}
+        </span>
       )}
     </div>
   );
 }
 
-/* ────────────────────────────────────────────
-   MAIN PAGE
-──────────────────────────────────────────── */
-export default function BirthdayForMonica() {
-  const [opened, setOpened] = useState(false);
-  const [envelopeDone, setEnvelopeDone] = useState(false);
-  const containerRef = useRef(null);
-
-  const { scrollYProgress } = useScroll();
-  const progressWidth = useTransform(scrollYProgress, [0, 1], ['0%', '100%']);
-
-  /* ── Envelope opener ── */
-  if (!opened) {
-    return (
-      <div className="fixed inset-0 bg-[#07070a] flex flex-col items-center justify-center z-50 overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-20"
-          style={{
-            background:
-              'radial-gradient(ellipse at 50% 40%, #c9a84c33 0%, transparent 70%)',
-          }}
-        />
-
-        {/* Stars */}
-        {[...Array(60)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full bg-white"
-            style={{
-              width: Math.random() * 2 + 1,
-              height: Math.random() * 2 + 1,
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              opacity: Math.random() * 0.6 + 0.1,
-              animation: `star-twinkle ${Math.random() * 3 + 2}s ease-in-out infinite`,
-              animationDelay: `${Math.random() * 3}s`,
-            }}
-          />
-        ))}
-
-        <AnimatePresence>
-          {!envelopeDone && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.2, y: -60 }}
-              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-              className="flex flex-col items-center gap-8 text-center px-6"
-              onAnimationComplete={() => {
-                if (envelopeDone) setOpened(true);
-              }}
-            >
-              <p className="text-[#c9a84c]/60 tracking-[0.4em] text-xs uppercase">
-                A message just for you
-              </p>
-              <h1
-                className="text-5xl sm:text-7xl md:text-8xl font-bold text-white"
-                style={{
-                  fontFamily: "'DM Serif Display', serif",
-                  letterSpacing: '-0.02em',
-                }}
-              >
-                Monica
-              </h1>
-              <p className="text-[#c9a84c] text-xl sm:text-2xl font-light tracking-widest">
-                Nalwoga ✦ Mukisa to Be
-              </p>
-              <div className="w-px h-16 bg-gradient-to-b from-transparent via-[#c9a84c] to-transparent" />
-              <p className="text-white/50 text-sm tracking-[0.3em] uppercase">
-                Tap to open your gift
-              </p>
-
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => {
-                  setEnvelopeDone(true);
-                  setTimeout(() => setOpened(true), 800);
-                }}
-                className="relative z-10 mt-4 px-12 py-5 border border-[#c9a84c]/60 text-[#c9a84c] tracking-[0.3em] text-sm uppercase
-                           hover:bg-[#c9a84c] hover:text-[#07070a] transition-all duration-500 font-medium"
-              >
-                Open ♡
-              </motion.button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <style>{`
-          @keyframes star-twinkle {
-            0%, 100% { opacity: 0.1; } 50% { opacity: 0.8; }
-          }
-        `}</style>
-      </div>
-    );
-  }
-
+function ActMark({ numeral, dark = false }) {
   return (
     <div
-      ref={containerRef}
-      className="bg-[#07070a] text-white overflow-x-hidden"
+      className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shrink-0"
+      style={{
+        border: `2px solid ${dark ? C.paper : C.ink}`,
+        color: dark ? C.paper : C.ink,
+        fontFamily: SERIF,
+        fontSize: 34,
+        fontStyle: 'italic',
+      }}
     >
-      {/* Progress bar */}
-      <motion.div
-        className="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-[#c9a84c] to-[#e8a87c] z-50 origin-left"
-        style={{ width: progressWidth }}
+      {numeral}
+    </div>
+  );
+}
+
+function Label({ children, color }) {
+  return (
+    <p
+      className="text-[11px] md:text-xs uppercase mb-4"
+      style={{ fontFamily: MONO, letterSpacing: '0.28em', color }}
+    >
+      {children}
+    </p>
+  );
+}
+
+/* little shape glyphs for the vows */
+function Glyph({ kind, color }) {
+  const s = 34;
+  const common = {
+    width: s,
+    height: s,
+    viewBox: '0 0 34 34',
+    'aria-hidden': true,
+  };
+  switch (kind) {
+    case 'circle':
+      return (
+        <svg {...common}>
+          <circle cx="17" cy="17" r="15" fill={color} />
+        </svg>
+      );
+    case 'half':
+      return (
+        <svg {...common}>
+          <path d="M2 24a15 15 0 0 1 30 0z" fill={color} />
+        </svg>
+      );
+    case 'tri':
+      return (
+        <svg {...common}>
+          <path d="M17 3l15 28H2z" fill={color} />
+        </svg>
+      );
+    case 'square':
+      return (
+        <svg {...common}>
+          <rect x="3" y="3" width="28" height="28" fill={color} />
+        </svg>
+      );
+    case 'diamond':
+      return (
+        <svg {...common}>
+          <path d="M17 1l16 16-16 16L1 17z" fill={color} />
+        </svg>
+      );
+    default:
+      return (
+        <svg {...common}>
+          <circle cx="17" cy="17" r="15" fill={color} />
+        </svg>
+      );
+  }
+}
+
+/* ─── scroll ring ─── */
+function ScrollRing() {
+  const { scrollYProgress } = useScroll();
+  const p = useSpring(scrollYProgress, { stiffness: 120, damping: 28 });
+  return (
+    <svg
+      className="fixed top-4 right-4 z-40 mix-blend-difference"
+      width="40"
+      height="40"
+      viewBox="0 0 40 40"
+      aria-hidden="true"
+    >
+      <circle
+        cx="20"
+        cy="20"
+        r="15"
+        fill="none"
+        stroke="#ffffff"
+        strokeOpacity="0.25"
+        strokeWidth="2"
       />
+      <motion.circle
+        cx="20"
+        cy="20"
+        r="15"
+        fill="none"
+        stroke="#ffffff"
+        strokeWidth="2"
+        style={{ pathLength: p, rotate: -90, transformOrigin: '20px 20px' }}
+      />
+    </svg>
+  );
+}
 
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Cinzel+Decorative:wght@400;700&display=swap');
-
-        * { -webkit-font-smoothing: antialiased; }
-        body { background: #07070a; }
-
-        .font-display { font-family: 'DM Serif Display', serif; }
-        .font-body { font-family: 'EB Garamond', serif; }
-        .font-cinzel { font-family: 'Cinzel Decorative', serif; }
-
-        @keyframes marquee-slide {
-          from { transform: translateX(0); }
-          to   { transform: translateX(-50%); }
-        }
-        @keyframes float-gentle {
-          0%, 100% { transform: translateY(0px) rotate(var(--r, 0deg)); }
-          50%       { transform: translateY(-12px) rotate(var(--r, 0deg)); }
-        }
-        @keyframes pulse-gold {
-          0%, 100% { box-shadow: 0 0 0 0 #c9a84c44; }
-          50%       { box-shadow: 0 0 40px 10px #c9a84c22; }
-        }
-        @keyframes shimmer {
-          0%   { background-position: -200% center; }
-          100% { background-position: 200% center; }
-        }
-        @keyframes heartbeat {
-          0%, 100% { transform: scale(1); }
-          15% { transform: scale(1.15); }
-          30% { transform: scale(1); }
-          45% { transform: scale(1.08); }
-        }
-        @keyframes orbit {
-          from { transform: rotate(0deg) translateX(110px) rotate(0deg); }
-          to   { transform: rotate(360deg) translateX(110px) rotate(-360deg); }
-        }
-
-        .text-gold { color: #c9a84c; }
-        .border-gold { border-color: #c9a84c; }
-        .bg-gold { background-color: #c9a84c; }
-        .text-cream { color: #f5f0e8; }
-
-        .shimmer-text {
-          background: linear-gradient(90deg, #c9a84c 0%, #f5d78e 30%, #e8a87c 50%, #f5d78e 70%, #c9a84c 100%);
-          background-size: 200% auto;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          animation: shimmer 4s linear infinite;
-        }
-
-        .noise-overlay::before {
-          content: '';
-          position: fixed;
-          inset: 0;
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-          pointer-events: none;
-          z-index: 999;
-          opacity: 0.4;
-        }
-
-        .divider {
-          width: 1px;
-          background: linear-gradient(to bottom, transparent, #c9a84c66, transparent);
-        }
-      `}</style>
-
-      <div className="noise-overlay" />
-
-      {/* ═══════════════════════════════════════════
-          SECTION 1   CINEMATIC HERO
-      ═══════════════════════════════════════════ */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
-        {/* Background image with dark overlay */}
-        <div className="absolute inset-0">
-          <img
-            src={Pic13}
-            alt=""
-            className="w-full h-full object-cover opacity-25"
+/* ─── theatre curtain ─── */
+function Curtain({ onDone }) {
+  const [parting, setParting] = useState(false);
+  return (
+    <div
+      className="fixed inset-0 z-50 flex overflow-hidden"
+      style={{ background: C.ink }}
+    >
+      <motion.div
+        className="w-1/2 h-full"
+        style={{ background: C.clay }}
+        animate={{ x: parting ? '-100%' : 0 }}
+        transition={{ duration: 1.3, ease: [0.76, 0, 0.24, 1] }}
+      />
+      <motion.div
+        className="w-1/2 h-full"
+        style={{ background: C.pine }}
+        animate={{ x: parting ? '100%' : 0 }}
+        transition={{ duration: 1.3, ease: [0.76, 0, 0.24, 1] }}
+        onAnimationComplete={() => parting && onDone()}
+      />
+      <motion.div
+        className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 pointer-events-none"
+        animate={{ opacity: parting ? 0 : 1 }}
+        transition={{ duration: 0.4 }}
+      >
+        <div className="pointer-events-auto flex flex-col items-center gap-8">
+          <div
+            className="w-24 h-24 rounded-full"
+            style={{ background: C.sun }}
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#07070a] via-[#07070a]/60 to-[#07070a]" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#07070a]/80 via-transparent to-[#07070a]/80" />
+          <p
+            className="text-xs uppercase"
+            style={{ fontFamily: MONO, letterSpacing: '0.3em', color: C.paper }}
+          >
+            For Monica
+          </p>
+          <h1
+            className="text-5xl md:text-7xl"
+            style={{ fontFamily: SERIF, color: C.paper, fontStyle: 'italic' }}
+          >
+            A plea in five acts
+          </h1>
+          <button
+            onClick={() => setParting(true)}
+            className="px-9 py-4 text-sm uppercase transition-transform hover:scale-105 active:scale-95"
+            style={{
+              background: C.paper,
+              color: C.ink,
+              fontFamily: MONO,
+              letterSpacing: '0.25em',
+              borderRadius: 999,
+            }}
+          >
+            Raise the curtain
+          </button>
         </div>
+      </motion.div>
+    </div>
+  );
+}
 
-        {/* Ambient glow */}
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-[#c9a84c]/10 blur-[120px] pointer-events-none" />
+/* ─── hero: two circles arrive from opposite sides, overlap into a lens that
+   says "US", then keep travelling until they are ONE circle, which opens
+   onto a photo of the two of you ─── */
+function HeroShapes({ ready }) {
+  // One shared timeline. Both circles (and the clip circles that cut the lens
+  // and the photo) move together, so the lens grows into a single full circle.
+  const move = {
+    duration: 4.5,
+    delay: 0.3,
+    times: [0, 0.44, 0.7, 1], // arrive, hold as a lens (US), merge
+    ease: ['easeOut', 'linear', 'easeInOut'],
+  };
+  const leftPath = [20, 250, 250, 300];
+  const rightPath = [580, 350, 350, 300];
 
-        <div className="relative z-10 text-center px-4 max-w-6xl mx-auto">
-          <motion.p
-            initial={{ opacity: 0, letterSpacing: '0.8em' }}
-            animate={{ opacity: 1, letterSpacing: '0.4em' }}
-            transition={{ duration: 1.5, delay: 0.2 }}
-            className="text-gold text-xs sm:text-sm uppercase tracking-[0.4em] mb-8 font-body"
-          >
-            April 2025 A Celebration for
-          </motion.p>
+  const Circle = ({ side, ...props }) => (
+    <motion.circle
+      r="150"
+      cy="170"
+      initial={{ cx: side === 'left' ? 20 : 580 }}
+      animate={ready ? { cx: side === 'left' ? leftPath : rightPath } : {}}
+      transition={move}
+      {...props}
+    />
+  );
 
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="font-display text-[13vw] sm:text-[11vw] md:text-[9vw] leading-[0.9] mb-4"
-          >
-            <span className="shimmer-text">Happy</span>
-            <br />
-            <span className="text-white">Birthday</span>
-          </motion.h1>
+  return (
+    <svg
+      viewBox="0 0 600 340"
+      className="w-full max-w-3xl mx-auto"
+      role="img"
+      aria-label="Two circles meet, overlap to form a shared space that reads US, then become one circle that opens onto a photo of Joshua and Monica"
+    >
+      <defs>
+        <clipPath id="heroClipA">
+          <Circle side="left" />
+        </clipPath>
+        <clipPath id="heroClipB">
+          <Circle side="right" />
+        </clipPath>
+      </defs>
 
-          <motion.div
-            initial={{ opacity: 0, scaleX: 0 }}
-            animate={{ opacity: 1, scaleX: 1 }}
-            transition={{ duration: 1, delay: 1.0 }}
-            className="w-full h-px bg-gradient-to-r from-transparent via-[#c9a84c] to-transparent my-8"
+      {/* the two circles, from opposite sides */}
+      <Circle side="left" fill={C.clay} />
+      <Circle side="right" fill={C.pine} />
+
+      {/* names, until the circles become one */}
+      <motion.g
+        initial={{ opacity: 0 }}
+        animate={ready ? { opacity: [0, 1, 1, 0] } : {}}
+        transition={{ delay: 1.4, duration: 2.6, times: [0, 0.25, 0.7, 1] }}
+      >
+        <text
+          x="160"
+          y="178"
+          textAnchor="middle"
+          fill={C.paper}
+          fontSize="28"
+          fontStyle="italic"
+          fontFamily="Cormorant Garamond, serif"
+        >
+          Joshua
+        </text>
+        <text
+          x="440"
+          y="178"
+          textAnchor="middle"
+          fill={C.paper}
+          fontSize="28"
+          fontStyle="italic"
+          fontFamily="Cormorant Garamond, serif"
+        >
+          Monica
+        </text>
+      </motion.g>
+
+      {/* the shared space, filled in the sun colour (follows the circles) */}
+      <motion.g
+        clipPath="url(#heroClipA)"
+        initial={{ opacity: 0 }}
+        animate={ready ? { opacity: 1 } : {}}
+        transition={{ delay: 2.4, duration: 0.6 }}
+      >
+        <Circle side="right" fill={C.sun} />
+      </motion.g>
+
+      {/* the photo, clipped to the shared space; once merged that is the full circle */}
+      <g clipPath="url(#heroClipA)">
+        <g clipPath="url(#heroClipB)">
+          <motion.image
+            href={PHOTOS.hero_us}
+            x="150"
+            y="20"
+            width="300"
+            height="300"
+            preserveAspectRatio="xMidYMid slice"
+            initial={{ opacity: 0 }}
+            animate={ready ? { opacity: 1 } : {}}
+            transition={{ delay: 4.9, duration: 1.4 }}
           />
+        </g>
+      </g>
 
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 1.2 }}
-            className="font-display text-4xl sm:text-6xl md:text-7xl text-cream italic mb-3"
-          >
-            Monica Nalwoga
-          </motion.h2>
+      {/* "US" appears in the lens, rides through the merge, then yields to the photo */}
+      <motion.text
+        x="300"
+        y="192"
+        textAnchor="middle"
+        fill={C.ink}
+        fontSize="64"
+        fontStyle="italic"
+        fontWeight="500"
+        fontFamily="Cormorant Garamond, serif"
+        initial={{ opacity: 0 }}
+        animate={ready ? { opacity: [0, 1, 1, 0] } : {}}
+        transition={{ delay: 2.5, duration: 3.3, times: [0, 0.12, 0.7, 1] }}
+      >
+        US
+      </motion.text>
+    </svg>
+  );
+}
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 1.6 }}
-            className="text-gold/70 tracking-[0.3em] text-sm font-body"
-          >
-            Mukisa to be ✦
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 2 }}
-            className="mt-16 flex flex-col items-center gap-2"
-          >
-            <div className="w-px h-12 bg-gradient-to-b from-[#c9a84c] to-transparent" />
-            <p className="text-white/30 text-xs tracking-widest uppercase">
-              Scroll
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════
-          SECTION 2   SWEET 17 TYPOGRAPHIC
-      ═══════════════════════════════════════════ */}
-      <section className="relative py-20 md:py-32 overflow-hidden">
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
-          <span
-            className="font-cinzel font-bold text-white/[0.03] select-none leading-none"
-            style={{ fontSize: 'clamp(200px, 40vw, 600px)' }}
-          >
-            17
-          </span>
-        </div>
-
-        <div className="relative z-10 max-w-5xl mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
-            <Reveal delay={0.1}>
-              <div className="space-y-6">
-                <p className="text-gold tracking-[0.4em] text-xs uppercase font-body">
-                  Sweet Seventeen
-                </p>
-                <h2 className="font-display text-6xl sm:text-7xl md:text-8xl text-cream leading-none">
-                  17
-                  <br />
-                  <span className="text-gold italic">Reasons</span>
-                  <br />
-                  <span className="text-white/60 text-4xl sm:text-5xl">
-                    I'm yours
-                  </span>
-                </h2>
-                <div className="w-12 h-px bg-gold/50" />
-                <p className="font-body text-lg sm:text-xl text-white/60 leading-relaxed italic">
-                  "Eleven months ago, a simple DM changed everything. What
-                  started on Instagram became the greatest story of my life."
-                </p>
-              </div>
-            </Reveal>
-
-            <Reveal delay={0.3} y={60}>
-              <div className="grid grid-cols-2 gap-4">
-                {[Pic7, Pic10, Pic14, Pic12].map((src, i) => (
-                  <div
-                    key={i}
-                    className={`overflow-hidden border border-white/5 ${i === 1 ? 'mt-8' : i === 3 ? 'mt-8' : ''}`}
-                    style={{ aspectRatio: i % 2 === 0 ? '3/4' : '4/3' }}
-                  >
-                    <img
-                      src={src}
-                      alt=""
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-                    />
-                  </div>
-                ))}
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════
-          SECTION 3   MARQUEE STRIP 1
-      ═══════════════════════════════════════════ */}
-      <div className="py-8 border-y border-white/5 space-y-4">
-        <Marquee
-          images={[Pic11, Pic14, Pic15, Pic16, Pic17, Pic18, Pic19, Pic20]}
-          speed={40}
-        />
-        <Marquee
-          images={[Pic21, Pic22, Pic23, Pic24, Pic25, Pic26, Pic27, Pic28]}
-          speed={50}
-          reverse
-        />
-      </div>
-
-      {/* ═══════════════════════════════════════════
-          SECTION 4   THE SPARK YOU BROUGHT BACK
-      ═══════════════════════════════════════════ */}
-      <section className="relative py-24 md:py-40 px-6">
-        <div className="max-w-7xl mx-auto">
-          {/* Big editorial pull-quote */}
-          <Reveal delay={0.1} y={30}>
-            <div className="border-l-2 border-gold/60 pl-6 md:pl-10 mb-20 md:mb-32">
-              <p className="font-display text-3xl sm:text-5xl md:text-6xl text-cream leading-tight">
-                "You brought my spark back.
-                <br />
-                <em className="text-gold">You gave me a reason</em>
-                <br />
-                to smile again."
-              </p>
-              <p className="text-white/30 text-sm tracking-widest mt-6 font-body uppercase">
-                Joshua
-              </p>
+/* ─── one act: copy on one side, photos stay in view on the other ─── */
+function Act({ numeral, kicker, title, children, photos, bg, fg, dark, flip }) {
+  return (
+    <section
+      className="relative px-6 py-24 md:py-36"
+      style={{ background: bg, color: fg, overflowX: 'clip' }}
+    >
+      <div className="max-w-6xl mx-auto grid md:grid-cols-12 gap-12 md:gap-16 items-start">
+        <div className={`md:col-span-7 ${flip ? 'md:order-2' : ''}`}>
+          <Reveal>
+            <div className="flex items-center gap-5 mb-8">
+              <ActMark numeral={numeral} dark={dark} />
+              <Label color={dark ? C.sun : C.clay}>{kicker}</Label>
+            </div>
+            <h2
+              className="text-4xl md:text-6xl leading-[1] mb-10"
+              style={{ fontFamily: SERIF, fontWeight: 500 }}
+            >
+              {title}
+            </h2>
+            <div
+              className="space-y-6 text-xl md:text-2xl leading-relaxed"
+              style={{ fontFamily: SERIF, opacity: 0.94 }}
+            >
+              {children}
             </div>
           </Reveal>
+        </div>
+        <div
+          className={`md:col-span-5 md:sticky md:top-24 ${flip ? 'md:order-1' : ''}`}
+        >
+          <Reveal delay={0.2} y={60}>
+            {photos}
+          </Reveal>
+        </div>
+      </div>
+    </section>
+  );
+}
 
-          {/* Three-column story */}
-          <div className="grid md:grid-cols-3 gap-8 md:gap-12 items-start">
-            {/* Image left */}
-            <Reveal delay={0} y={50}>
-              <div className="space-y-4">
-                <div className="aspect-[3/4] overflow-hidden border border-white/5">
-                  <img
-                    src={Pic33}
-                    alt=""
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-                  />
-                </div>
-                <p className="text-gold/50 text-xs tracking-widest uppercase text-center font-body">
-                  Before & After You
-                </p>
-              </div>
-            </Reveal>
+/* ─── page ─── */
+export default function ApologyForMonica() {
+  const [ready, setReady] = useState(false);
+  const [answer, setAnswer] = useState(null);
 
-            {/* Text center */}
-            <Reveal delay={0.2} y={50} className="md:pt-20">
-              <div className="space-y-8">
-                <div>
-                  <p className="text-gold tracking-[0.3em] text-xs uppercase mb-3 font-body">
-                    What You Did For Me
-                  </p>
-                  <h3 className="font-display text-4xl sm:text-5xl text-cream mb-6 leading-tight">
-                    You Restored My Faith in People
-                  </h3>
-                  <p className="font-body text-white/60 text-lg leading-relaxed">
-                    I had seen so much darkness in people enough to make me
-                    believe that goodness was rare and unreachable. Then you
-                    walked in and showed me, effortlessly, that someone could
-                    simply be good. Simply be kind. Simply be safe.
-                  </p>
-                </div>
-                <div className="w-full h-px bg-white/5" />
-                <p className="font-body text-white/60 text-lg leading-relaxed italic">
-                  You were the first safe space I had known in a long time and I
-                  want you to know how rare and precious that is.
-                </p>
-              </div>
-            </Reveal>
+  useEffect(() => {
+    const previous = document.body.style.background;
+    document.body.style.background = C.paper;
+    return () => {
+      document.body.style.background = previous;
+    };
+  }, []);
 
-            {/* Image right */}
-            <Reveal delay={0.4} y={50}>
-              <div className="space-y-4">
-                <div className="aspect-[3/4] overflow-hidden border border-white/5">
-                  <img
-                    src={Pic34}
-                    alt=""
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-                  />
-                </div>
-                <div className="aspect-[4/3] overflow-hidden border border-white/5 mt-4">
-                  <img
-                    src={Pic35}
-                    alt=""
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-                  />
-                </div>
-              </div>
-            </Reveal>
-          </div>
+  return (
+    <div style={{ background: C.paper, color: C.ink, overflowX: 'clip' }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Mono:wght@400;500&display=swap');
+        * { -webkit-font-smoothing: antialiased; }
+        html { scroll-behavior: smooth; }
+        ::selection { background: ${C.sun}; color: ${C.ink}; }
+      `}</style>
+
+      {!ready && <Curtain onDone={() => setReady(true)} />}
+      {ready && <ScrollRing />}
+
+      {/* ═════════ PROLOGUE / HERO ═════════ */}
+      <section className="relative min-h-screen flex flex-col items-center justify-center px-6 py-24 text-center">
+        <div className="relative z-10 w-full">
+          <Label color={C.clay}>For Monica</Label>
+          <HeroShapes ready={ready} />
+          <motion.h1
+            initial={{ opacity: 0, y: 24 }}
+            animate={ready ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 6.4, duration: 1, ease: EASE }}
+            className="text-[13vw] md:text-[8rem] leading-[1] mt-10"
+            style={{ fontFamily: SERIF, fontWeight: 500 }}
+          >
+            I'm{' '}
+            <span style={{ color: C.clay, fontStyle: 'italic' }}>sorry</span>,
+            Mami.
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={ready ? { opacity: 1 } : {}}
+            transition={{ delay: 7, duration: 1 }}
+            className="mt-10 text-xl md:text-3xl max-w-2xl mx-auto"
+            style={{ fontFamily: SERIF, fontStyle: 'italic' }}
+          >
+            {PROLOGUE_LINE}
+          </motion.p>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════
-          SECTION 5   FULL BLEED DARK QUOTE
-      ═══════════════════════════════════════════ */}
-      <section className="relative py-24 md:py-48 overflow-hidden">
-        <div className="absolute inset-0">
-          <img
-            src={Pic1}
-            alt=""
-            className="w-full h-full object-cover object-top opacity-20"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#07070a] via-[#07070a]/80 to-[#07070a]" />
-        </div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#c9a84c]/5 blur-[150px] pointer-events-none" />
-
-        <Reveal
-          delay={0.2}
-          y={20}
-          className="relative z-10 max-w-4xl mx-auto px-6 text-center"
-        >
-          <span className="font-cinzel text-gold/30 text-8xl md:text-[12rem] leading-none select-none">
-            "
-          </span>
-          <p className="font-display text-3xl sm:text-5xl md:text-6xl text-cream leading-tight -mt-8 md:-mt-16">
-            You are my favorite addiction,
-            <br />
-            <span className="text-gold italic">and I am proud</span>
-            <br />
-            to be addicted to you.
-          </p>
-          <div className="mt-12 flex items-center justify-center gap-4">
-            <div className="w-16 h-px bg-gold/30" />
-            <span className="text-gold/60 text-sm tracking-widest uppercase font-body">
-              My person
-            </span>
-            <div className="w-16 h-px bg-gold/30" />
+      {/* ═════════ PROLOGUE TEXT ═════════ */}
+      <section className="px-6 pb-24 md:pb-36" style={{ background: C.paper }}>
+        <Reveal>
+          <div
+            className="max-w-3xl mx-auto space-y-6 text-xl md:text-2xl leading-relaxed"
+            style={{ fontFamily: SERIF }}
+          >
+            <Paras items={PROLOGUE} accent={C.clay} />
           </div>
         </Reveal>
       </section>
 
-      {/* ═══════════════════════════════════════════
-          SECTION 6   WHAT YOU MEAN TO ME (ROLES)
-      ═══════════════════════════════════════════ */}
-      <section className="py-24 md:py-40 px-6">
-        <div className="max-w-6xl mx-auto">
-          <Reveal delay={0.1}>
-            <p className="text-gold tracking-[0.4em] text-xs uppercase text-center mb-16 font-body">
-              The many ways you love me
-            </p>
-          </Reveal>
-
-          {/* Stacked horizontal roles */}
-          <div className="space-y-6 md:space-y-0 md:divide-y md:divide-white/5">
-            {[
-              {
-                role: 'My Girlfriend',
-                desc: "Who chose me when she didn't have to, and stayed when it would have been easier to leave.",
-                img: Pic29,
-              },
-              {
-                role: 'My Best Friend',
-                desc: 'Who knows the real Joshua   not the one who has it together on paper, but the one still figuring it out.',
-                img: Pic30,
-              },
-              {
-                role: 'My Safe Space',
-                desc: 'The first person who made me feel like the broken parts of me were still worth loving.',
-                img: Pic31,
-              },
-              {
-                role: 'My Sunshine',
-                desc: 'You lit up rooms I had closed off. You brought back colour into a life that had gone grey.',
-                img: Pic32,
-              },
-            ].map((item, i) => (
-              <Reveal key={i} delay={i * 0.1}>
-                <div className="flex flex-col md:flex-row items-start md:items-center gap-6 py-8 group cursor-default">
-                  <div className="flex-shrink-0 w-16 h-16 md:w-20 md:h-20 overflow-hidden rounded-full border border-gold/20 group-hover:border-gold/60 transition-all duration-500">
-                    <img
-                      src={item.img}
-                      alt=""
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                  </div>
-                  <div className="flex-shrink-0">
-                    <div className="w-px h-8 divider hidden md:block mx-8" />
-                  </div>
-                  <h3 className="font-display text-3xl sm:text-4xl text-cream group-hover:text-gold transition-colors duration-500 min-w-[200px]">
-                    {item.role}
-                  </h3>
-                  <div className="flex-shrink-0">
-                    <div className="w-px h-8 divider hidden md:block mx-8" />
-                  </div>
-                  <p className="font-body text-white/50 text-lg leading-relaxed group-hover:text-white/70 transition-colors duration-500 max-w-xl">
-                    {item.desc}
-                  </p>
-                  <div className="ml-auto hidden md:block text-white/10 group-hover:text-gold/40 transition-colors duration-500 text-2xl">
-                    ✦
-                  </div>
-                </div>
-              </Reveal>
-            ))}
+      {/* ═════════ ACT I ═════════ */}
+      <Act
+        numeral="I"
+        kicker="Act One / The Meeting"
+        title="A little message that became a big part of my life"
+        bg={C.paper}
+        fg={C.ink}
+        photos={
+          <div className="relative h-[420px] md:h-[520px]">
+            <div className="absolute left-0 top-0 w-[64%]">
+              <Frame
+                slot="actI_firstDays"
+                alt="The two of us in the early days"
+              />
+            </div>
+            <div className="absolute right-0 bottom-0 w-[52%]">
+              <Frame slot="actI_herSmile" alt="Monica smiling" tint={C.clay} />
+            </div>
+            <div
+              className="absolute right-[4%] top-[4%] w-14 h-14 rounded-full"
+              style={{ background: C.sun }}
+            />
           </div>
+        }
+      >
+        <Paras items={ACT_ONE} accent={C.clay} />
+      </Act>
+
+      {/* ═════════ ACT II ═════════ */}
+      <Act
+        numeral="II"
+        kicker="Act Two / The Distance"
+        title="Somewhere along the way, we got hurt"
+        bg={C.sun}
+        fg={C.ink}
+        flip
+        photos={
+          <div className="relative h-[420px] md:h-[520px]">
+            <div className="absolute left-0 bottom-0 w-[62%]">
+              <Frame
+                slot="actII_beforeYouLeft"
+                alt="The two of us before I left for the US"
+                tint={C.pine}
+              />
+            </div>
+            <div className="absolute right-0 top-0 w-[50%]">
+              <Frame slot="actII_you" alt="Me, alone" tint={C.clay} />
+            </div>
+          </div>
+        }
+      >
+        <Paras items={ACT_TWO} accent={C.ink} />
+      </Act>
+
+      {/* ═════════ ACT III ═════════ */}
+      <Act
+        numeral="III"
+        kicker="Act Three / The Fire"
+        title="The words I cannot take back"
+        bg={C.ink}
+        fg={C.paper}
+        dark
+        photos={
+          <div className="relative flex justify-center">
+            <div
+              className="absolute -right-8 -top-8 w-32 h-32 md:w-48 md:h-48 rounded-full"
+              style={{ background: C.clay }}
+            />
+            <Frame
+              slot="actIII_quiet"
+              alt="A quiet moment"
+              className="relative w-[82%]"
+              tint={C.pine}
+            />
+          </div>
+        }
+      >
+        <Paras items={ACT_THREE} accent={C.sun} />
+      </Act>
+
+      {/* ═════════ INTERLUDE ═════════ */}
+      <section className="py-24 md:py-32" style={{ background: C.paper }}>
+        <Reveal>
+          <div className="px-6 max-w-3xl mx-auto mb-14">
+            <Label color={C.clay}>Interlude / The Little Things</Label>
+            <h3
+              className="text-5xl md:text-7xl leading-none mb-4"
+              style={{
+                fontFamily: SERIF,
+                fontStyle: 'italic',
+                fontWeight: 500,
+              }}
+            >
+              Moments I still carry with me
+            </h3>
+            <div
+              className="mt-10 space-y-6 text-xl md:text-2xl leading-relaxed"
+              style={{ fontFamily: SERIF }}
+            >
+              <Paras items={INTERLUDE} accent={C.clay} />
+            </div>
+          </div>
+        </Reveal>
+        <div className="flex gap-5 md:gap-8 overflow-x-auto px-6 pb-6 snap-x snap-mandatory items-center">
+          {PHOTOS.gallery.map((src, i) => {
+            const tints = [C.clay, C.pine, C.sun, C.ink, C.sun, C.clay];
+            return (
+              <div key={i} className="shrink-0 snap-center w-56 md:w-72">
+                <Frame
+                  src={src}
+                  slot={`gallery_${i + 1}`}
+                  alt={`A moment we shared, ${i + 1} of ${PHOTOS.gallery.length}`}
+                  tint={tints[i]}
+                />
+              </div>
+            );
+          })}
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════
-          SECTION 7   SCATTERED GALLERY (POLAROID)
-      ═══════════════════════════════════════════ */}
-      <section className="py-24 md:py-32 px-6 bg-[#0d0d10] border-y border-white/5">
+      {/* ═════════ ACT IV ═════════ */}
+      <section
+        className="px-6 py-24 md:py-36"
+        style={{ background: C.pine, color: C.paper, overflowX: 'clip' }}
+      >
         <div className="max-w-6xl mx-auto">
-          <Reveal delay={0.1}>
-            <h2 className="font-display text-5xl sm:text-7xl md:text-8xl text-cream text-center mb-4">
-              Our <span className="text-gold italic">Moments</span>
+          <Reveal>
+            <div className="flex items-center gap-5 mb-8">
+              <ActMark numeral="IV" dark />
+              <Label color={C.sun}>Act Four / The Vow</Label>
+            </div>
+            <h2
+              className="text-5xl md:text-8xl leading-[0.92] mb-10 max-w-4xl"
+              style={{ fontFamily: SERIF, fontWeight: 500 }}
+            >
+              I want to love you better
             </h2>
-            <p className="text-center text-white/30 tracking-widest text-sm font-body mb-16">
-              Eleven months of magic
-            </p>
           </Reveal>
 
-          {/* Mobile carousel */}
-          <SwipeCarousel
-            images={[
-              Pic36,
-              Pic37,
-              Pic38,
-              Pic39,
-              Pic40,
-              Pic41,
-              Pic42,
-              Pic43,
-              Pic44,
-            ]}
-            intervalMs={3800}
-          />
-
-          {/* Desktop polaroid scatter */}
-          <div className="hidden md:block">
-            <div className="grid grid-cols-4 gap-6 items-end">
-              <Reveal delay={0.1} y={30}>
+          <div className="grid md:grid-cols-12 gap-12 md:gap-16 items-start">
+            <div className="md:col-span-7">
+              <Reveal>
                 <div
-                  style={{
-                    '--r': '-4deg',
-                    animation: 'float-gentle 6s ease-in-out infinite',
-                  }}
+                  className="space-y-6 text-xl md:text-2xl leading-relaxed mb-14"
+                  style={{ fontFamily: SERIF, opacity: 0.94 }}
                 >
-                  <Polaroid src={Pic36} rotate={-4} label="us ♡" />
+                  <Paras items={VOW_INTRO} accent={C.sun} />
                 </div>
               </Reveal>
+
+              <div className="space-y-2">
+                {VOWS.map((v, i) => (
+                  <Reveal key={v.t} delay={0.05} y={24}>
+                    <div
+                      className="flex items-start gap-5 py-7"
+                      style={{ borderTop: `1px solid ${C.paper}33` }}
+                    >
+                      <div className="mt-2 shrink-0">
+                        <Glyph kind={v.g} color={v.c} />
+                      </div>
+                      <div>
+                        <p
+                          className="text-xs uppercase mb-2"
+                          style={{
+                            fontFamily: MONO,
+                            letterSpacing: '0.25em',
+                            color: C.sun,
+                          }}
+                        >
+                          {`0${i + 1}`}
+                        </p>
+                        <h4
+                          className="text-2xl md:text-3xl leading-tight"
+                          style={{ fontFamily: SERIF, fontWeight: 600 }}
+                        >
+                          {v.t}
+                        </h4>
+                        <p
+                          className="text-lg md:text-xl mt-2 leading-relaxed"
+                          style={{ fontFamily: SERIF, opacity: 0.85 }}
+                        >
+                          {v.d}
+                        </p>
+                      </div>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
+
+              <Reveal>
+                <div
+                  className="mt-10 pt-10 space-y-6 text-xl md:text-2xl leading-relaxed"
+                  style={{
+                    fontFamily: SERIF,
+                    opacity: 0.94,
+                    borderTop: `1px solid ${C.paper}33`,
+                  }}
+                >
+                  <Paras items={VOW_OUTRO} accent={C.sun} />
+                </div>
+              </Reveal>
+            </div>
+
+            <div className="md:col-span-5 md:sticky md:top-24">
               <Reveal delay={0.2} y={50}>
-                <div
-                  style={{
-                    animation: 'float-gentle 7s ease-in-out infinite',
-                    animationDelay: '1s',
-                  }}
-                >
-                  <Polaroid src={Pic37} rotate={2} label="my mami" />
-                </div>
-              </Reveal>
-              <Reveal delay={0.15} y={40}>
-                <div
-                  style={{
-                    animation: 'float-gentle 5s ease-in-out infinite',
-                    animationDelay: '2s',
-                  }}
-                >
-                  <Polaroid src={Pic38} rotate={-2} label="always" />
-                </div>
-              </Reveal>
-              <Reveal delay={0.3} y={30}>
-                <div
-                  style={{
-                    animation: 'float-gentle 8s ease-in-out infinite',
-                    animationDelay: '0.5s',
-                  }}
-                >
-                  <Polaroid src={Pic39} rotate={3} label="beautiful" />
-                </div>
-              </Reveal>
-            </div>
-            <div className="grid grid-cols-5 gap-4 mt-6 items-start">
-              {[Pic40, Pic41, Pic42, Pic43, Pic44].map((src, i) => (
-                <Reveal key={i} delay={i * 0.08} y={20}>
-                  <div
-                    style={{
-                      animation: `float-gentle ${5 + i}s ease-in-out infinite`,
-                      animationDelay: `${i * 0.7}s`,
-                    }}
-                  >
-                    <Polaroid src={src} rotate={[-3, 2, -5, 4, -1][i]} />
-                  </div>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════
-          SECTION 8   YOU ARE STUNNING
-      ═══════════════════════════════════════════ */}
-      <section className="relative py-24 md:py-40 overflow-hidden">
-        {/* Vertical text */}
-        <div className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 -rotate-90 text-white/5 font-cinzel text-sm tracking-[0.6em] uppercase select-none whitespace-nowrap">
-          Monica Nalwoga ✦ Mukisa to Be ✦ Sweet Seventeen
-        </div>
-
-        <div className="max-w-7xl mx-auto px-6 md:px-16">
-          <div className="grid md:grid-cols-12 gap-8 items-center">
-            {/* Text left */}
-            <div className="md:col-span-5 space-y-8">
-              <Reveal delay={0.1}>
-                <h2 className="font-display text-5xl sm:text-6xl md:text-7xl text-cream leading-tight">
-                  You Are
-                  <br />
-                  <span className="shimmer-text">SOOO HOOTTTT</span>
-                </h2>
-              </Reveal>
-              <Reveal delay={0.25}>
-                <div className="space-y-4">
-                  <p className="font-body text-white/60 text-lg leading-relaxed">
-                    I noticed you the moment you walked in. Your beauty was
-                    impossible to ignore not just how you look, but the way you
-                    carry yourself. The quiet confidence. The warmth you give
-                    off without even trying.
-                  </p>
-                  <p className="font-body text-white/60 text-lg leading-relaxed">
-                    Every single day, I thank God that I found you before I left
-                    Uganda. That my heart found its forever home before distance
-                    ever tried to test it.
-                  </p>
-                </div>
-              </Reveal>
-              <Reveal delay={0.4}>
-                <div className="flex items-center gap-4">
-                  <div className="w-8 h-px bg-gold/40" />
-                  <p className="text-gold font-body italic text-lg">
-                    "You made me believe I could be a 9, even a 10."
-                  </p>
-                </div>
-              </Reveal>
-            </div>
-
-            {/* Big center image */}
-            <div className="md:col-span-4 md:col-start-7">
-              <Reveal delay={0.2} y={60}>
-                <div className="relative">
-                  <div className="aspect-[3/4] overflow-hidden border border-white/5 shadow-2xl">
-                    <img
-                      src={Pic70}
-                      alt=""
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#07070a]/60 via-transparent to-transparent" />
-                  </div>
-                  {/* Floating small photos */}
-                  <div
-                    className="absolute -right-6 -top-6 w-28 h-28 overflow-hidden border-2 border-[#07070a] shadow-2xl hidden md:block"
-                    style={{
-                      animation: 'float-gentle 5s ease-in-out infinite',
-                    }}
-                  >
-                    <img
-                      src={Pic50}
-                      alt=""
-                      className="w-full h-full object-cover"
+                <div className="relative h-[520px]">
+                  <div className="absolute left-0 top-0 w-[64%]">
+                    <Frame
+                      slot="actIV_her"
+                      alt="Monica, radiant"
+                      tint={C.clay}
                     />
                   </div>
-                  <div
-                    className="absolute -left-6 -bottom-6 w-24 h-24 overflow-hidden border-2 border-[#07070a] shadow-2xl hidden md:block"
-                    style={{
-                      animation: 'float-gentle 7s ease-in-out infinite',
-                      animationDelay: '1.5s',
-                    }}
-                  >
-                    <img
-                      src={Pic33}
-                      alt=""
-                      className="w-full h-full object-cover"
+                  <div className="absolute right-0 bottom-0 w-[54%]">
+                    <Frame
+                      slot="actIV_us"
+                      alt="The two of us, close"
+                      tint={C.sun}
                     />
                   </div>
                 </div>
               </Reveal>
             </div>
           </div>
-
-          {/* Extra portrait row */}
-          <div className="mt-16 md:mt-24 grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[Pic22, Pic23, Pic24, Pic25].map((src, i) => (
-              <Reveal key={i} delay={i * 0.1} y={30}>
-                <div className="aspect-square overflow-hidden border border-white/5">
-                  <img
-                    src={src}
-                    alt=""
-                    className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
-                  />
-                </div>
-              </Reveal>
-            ))}
-          </div>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════
-          SECTION 9   MARQUEE STRIP 2
-      ═══════════════════════════════════════════ */}
-      <div className="py-6 border-y border-white/5">
-        <Marquee
-          images={[Pic26, Pic27, Pic28, Pic45, Pic46, Pic16, Pic18, Pic19]}
-          speed={45}
-        />
-      </div>
-
-      {/* ═══════════════════════════════════════════
-          SECTION 10   LOVE LETTER SECTION
-      ═══════════════════════════════════════════ */}
-      <section className="relative py-24 md:py-40 px-6">
-        <div className="max-w-4xl mx-auto">
-          <Reveal delay={0.1}>
-            <div className="text-center mb-16">
-              <p className="text-gold tracking-[0.4em] text-xs uppercase font-body mb-4">
-                A note from your boyfriend
-              </p>
-              <div className="w-px h-16 bg-gradient-to-b from-gold/60 to-transparent mx-auto" />
-            </div>
-          </Reveal>
-
-          {/* Letter style */}
-          <Reveal delay={0.2} y={30}>
-            <div className="border border-white/5 bg-[#0d0d10] p-8 md:p-14 relative">
-              <div className="absolute top-0 left-0 w-12 h-12 border-t border-l border-gold/30" />
-              <div className="absolute top-0 right-0 w-12 h-12 border-t border-r border-gold/30" />
-              <div className="absolute bottom-0 left-0 w-12 h-12 border-b border-l border-gold/30" />
-              <div className="absolute bottom-0 right-0 w-12 h-12 border-b border-r border-gold/30" />
-
-              <p className="font-display text-cream text-lg italic mb-8">
-                My dearest Monica,
-              </p>
-
-              <div className="space-y-6 font-body text-white/65 text-lg leading-relaxed">
-                <p>
-                  I cannot imagine what I stumbled on when we first started
-                  talking. You have been, without exaggeration, the single
-                  greatest thing to happen to me. And I mean that from the
-                  deepest part of me.
-                </p>
-                <p>
-                  I have spent most of my life being strong for everyone else,
-                  grinding while I was breaking inside, smiling while I was
-                  aching for all of it to stop. But with you, I never had to
-                  perform. You saw the boy beneath all of it the one who just
-                  wanted stability, unconditional love, someone to confide in
-                  and you loved him anyway.
-                </p>
-                <p>
-                  When Miss Comfort said you brought my spark back, she was
-                  right.
-                  <span className="text-cream">
-                    You made me believe in goodness again. In people again. In
-                    myself again.
-                  </span>
-                  I remember telling you I thought I was a 6 at best you helped
-                  me see that maybe I was an 8, maybe even a 9. One day if
-                  possible, a 10.
-                </p>
-                <p>
-                  Our relationship has been through soo much fire. Extremely hot
-                  fire. I don't know whether you can define the world extremely.
-                  But I have never once stopped believing that what we have is
-                  worth every battle. Because the peace and okayness you
-                  deserve?
-                  <span className="text-gold italic">
-                    It is coming. For both of us.
-                  </span>
-                </p>
-                <p>
-                  So on this day, your 17th birthday, I want you to feel every
-                  ounce of the love I carry for you the kind that doesn't have
-                  conditions, the kind that sees you fully and chooses you
-                  completely.
-                </p>
-              </div>
-
-              <div className="mt-10 pt-8 border-t border-white/5">
-                <p className="font-display text-cream text-2xl italic">
-                  Forever yours
-                </p>
-                <p className="font-cinzel text-gold text-xl mt-2">
-                  Joshua Mukisa
-                </p>
-                <p className="text-white/30 text-sm font-body mt-1">
-                  Your boyfriend. Your husband. The love of your life. Your
-                  Dada. Your DADDY. Your Pépé. Your Best Friend. Your Father.
-                  Your Son. Your Life's Co-Founder, Your forever person. The
-                  sugar in your tea, and juice to your biscuit.
-                </p>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════
-          SECTION 11   PÉPÉ & MÉMÉ
-      ═══════════════════════════════════════════ */}
-      <section className="py-24 md:py-40 px-6 bg-[#0d0d10] border-y border-white/5">
-        <div className="max-w-6xl mx-auto">
-          <Reveal delay={0.1}>
-            <h2 className="font-display text-6xl sm:text-8xl md:text-[10rem] text-center leading-none mb-4">
-              <span className="text-white">Pépé</span>{' '}
-              <span className="text-gold italic">&</span>{' '}
-              <span className="text-white">Mémé</span>
-            </h2>
-            <p className="text-center text-white/30 font-body text-lg italic mb-16">
-              I cannot wait to spend the rest of my life with you, boo boo.
-            </p>
-          </Reveal>
-
-          {/* Mobile carousel */}
-          <SwipeCarousel images={[Pic45, Pic46]} intervalMs={5000} />
-
-          {/* Desktop layout */}
-          <div className="hidden md:grid grid-cols-2 gap-8">
-            {[Pic45, Pic46].map((src, i) => (
-              <Reveal key={i} delay={i * 0.2} y={40}>
-                <div
-                  className="relative aspect-[3/4] overflow-hidden border border-white/5 group"
-                  style={{
-                    animation: `pulse-gold ${3 + i}s ease-in-out infinite`,
-                  }}
-                >
-                  <img
-                    src={src}
-                    alt=""
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#07070a]/70 via-transparent to-transparent" />
-                  <div className="absolute bottom-6 left-6">
-                    <p className="text-gold font-display text-2xl italic">
-                      {i === 0 ? 'Pépé' : 'Mémé'}
-                    </p>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-
-          <Reveal delay={0.4}>
-            <div className="mt-16 md:mt-24 text-center space-y-4">
-              <p className="font-display text-3xl sm:text-5xl text-cream">
-                Us. Always. <span className="text-gold italic">Forever.</span>
-              </p>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════
-          SECTION 12   THE FINAL WISH (BIRTHDAY CLOSE)
-      ═══════════════════════════════════════════ */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center py-24 overflow-hidden">
-        {/* Background collage */}
-        <div className="absolute inset-0 grid grid-cols-4 md:grid-cols-6 opacity-10">
-          {[
-            Pic11,
-            Pic12,
-            Pic13,
-            Pic14,
-            Pic15,
-            Pic1,
-            Pic7,
-            Pic9,
-            Pic16,
-            Pic17,
-            Pic18,
-            Pic19,
-          ].map((src, i) => (
-            <div key={i} className="overflow-hidden">
-              <img src={src} alt="" className="w-full h-full object-cover" />
-            </div>
-          ))}
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-[#07070a] via-[#07070a]/90 to-[#07070a]" />
-
-        {/* Glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#c9a84c]/8 blur-[150px] pointer-events-none" />
-
-        <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
-          <Reveal delay={0.1}>
-            <p className="text-gold tracking-[0.5em] text-xs uppercase font-body mb-8">
-              April 2025
-            </p>
-          </Reveal>
-
-          <Reveal delay={0.2} y={30}>
-            <h2 className="font-display text-[15vw] sm:text-[12vw] md:text-[10vw] leading-none text-cream mb-6">
-              Sweet
-              <br />
-              <span className="shimmer-text">Seventeen</span>
-            </h2>
-          </Reveal>
-
-          <Reveal delay={0.4} y={20}>
-            <div className="w-full h-px bg-gradient-to-r from-transparent via-gold/60 to-transparent mb-8" />
-            <p className="font-body text-white/60 text-xl sm:text-2xl leading-relaxed mb-12">
-              I wish you, in Jesus' name, that you live to blow out many, many
-              more. That every year brings you more joy than the last. That you
-              are protected, celebrated, and deeply loved. And I pray I truly
-              pray that I get to be the one standing right beside you for every
-              single one.
-            </p>
-          </Reveal>
-
-          <Reveal delay={0.55}>
-            <div className="flex flex-col items-center gap-6 mb-16">
-              {/* Animated heart */}
-              <div
-                className="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center"
-                style={{ animation: 'heartbeat 2s ease-in-out infinite' }}
+      {/* ═════════ WHAT I HOPE FOR ═════════ */}
+      <section
+        className="px-6 py-24 md:py-36"
+        style={{ background: C.sun, color: C.ink, overflowX: 'clip' }}
+      >
+        <div className="max-w-6xl mx-auto grid md:grid-cols-12 gap-12 md:gap-16 items-start">
+          <div className="md:col-span-5 md:sticky md:top-24">
+            <Reveal>
+              <svg
+                viewBox="0 0 200 110"
+                className="w-48 mb-8"
+                aria-hidden="true"
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="#c9a84c"
-                  className="w-full h-full"
-                >
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                </svg>
+                <defs>
+                  <clipPath id="hopeClip">
+                    <circle cx="70" cy="55" r="50" />
+                  </clipPath>
+                </defs>
+                <g clipPath="url(#hopeClip)">
+                  <circle cx="130" cy="55" r="50" fill={C.clay} />
+                </g>
+                <circle
+                  cx="70"
+                  cy="55"
+                  r="50"
+                  fill="none"
+                  stroke={C.ink}
+                  strokeWidth="2"
+                />
+                <circle
+                  cx="130"
+                  cy="55"
+                  r="50"
+                  fill="none"
+                  stroke={C.ink}
+                  strokeWidth="2"
+                />
+              </svg>
+              <Label color={C.pine}>What I hope for, when you're ready</Label>
+              <h2
+                className="text-4xl md:text-6xl leading-[1]"
+                style={{ fontFamily: SERIF, fontWeight: 500 }}
+              >
+                There is more I would like us to understand
+              </h2>
+            </Reveal>
+          </div>
+          <div className="md:col-span-7">
+            <Reveal delay={0.1}>
+              <div
+                className="space-y-6 text-xl md:text-2xl leading-relaxed"
+                style={{ fontFamily: SERIF }}
+              >
+                <Paras items={HOPE} accent={C.ink} />
               </div>
+            </Reveal>
+          </div>
+        </div>
+      </section>
 
-              <p className="font-display text-4xl sm:text-5xl md:text-6xl text-cream">
-                I Love You.
-              </p>
-              <p className="font-body text-white/50 text-lg">
-                More than words. More than distance. More than anything.
-              </p>
+      {/* ═════════ EPILOGUE ═════════ */}
+      <section
+        className="relative px-6 py-28 md:py-44 overflow-hidden"
+        style={{ background: C.paper }}
+      >
+        <div
+          className="absolute left-1/2 top-[22%] -translate-x-1/2 -translate-y-1/2 w-[80vmin] h-[80vmin] rounded-full"
+          style={{ background: C.sun, opacity: 0.35 }}
+        />
+        <div className="relative z-10 max-w-3xl mx-auto">
+          <Reveal>
+            <div className="text-center">
+              <Label color={C.clay}>Act Five / Epilogue</Label>
+              <div className="flex justify-center mb-10">
+                <Frame
+                  slot="epilogue_us"
+                  alt="Us, at our best"
+                  className="w-44 md:w-60"
+                  tint={C.clay}
+                />
+              </div>
+              <h2
+                className="text-[14vw] md:text-[8rem] leading-[0.9] mb-14"
+                style={{ fontFamily: SERIF, fontWeight: 500 }}
+              >
+                I'm{' '}
+                <span style={{ fontStyle: 'italic', color: C.clay }}>
+                  sorry
+                </span>
+                , Mami.
+              </h2>
+            </div>
+            <div
+              className="space-y-6 text-xl md:text-2xl leading-relaxed"
+              style={{ fontFamily: SERIF }}
+            >
+              <Paras items={EPILOGUE} accent={C.clay} />
             </div>
           </Reveal>
 
-          <Reveal delay={0.7}>
-            <div className="border border-white/5 bg-[#0d0d10]/80 backdrop-blur-sm px-8 py-8 inline-block">
-              <p className="font-cinzel text-gold text-xl md:text-2xl mb-2">
-                Joshua Mukisa
-              </p>
-              <div className="w-full h-px bg-gold/20 my-3" />
-              <p className="font-body text-white/40 text-sm tracking-widest">
-                Your boyfriend ✦ Your husband ✦ The love of your life
-                <br />
-                Your Daddy ✦ Your Dada ✦ Pépé
-              </p>
+          <Reveal delay={0.2}>
+            <div className="mt-14 flex flex-col sm:flex-row gap-4 justify-center">
+              <button
+                onClick={() => setAnswer('begin')}
+                className="px-8 py-4 text-sm uppercase transition-transform hover:scale-105 active:scale-95"
+                style={{
+                  background: C.ink,
+                  color: C.paper,
+                  borderRadius: 999,
+                  fontFamily: MONO,
+                  letterSpacing: '0.2em',
+                }}
+              >
+                Let's begin again
+              </button>
+              <button
+                onClick={() => setAnswer('time')}
+                className="px-8 py-4 text-sm uppercase transition-transform hover:scale-105 active:scale-95"
+                style={{
+                  border: `2px solid ${C.ink}`,
+                  color: C.ink,
+                  borderRadius: 999,
+                  fontFamily: MONO,
+                  letterSpacing: '0.2em',
+                }}
+              >
+                I need a little time
+              </button>
             </div>
           </Reveal>
 
-          {/* Bottom star strip */}
-          <Reveal delay={0.85}>
-            <div className="mt-16 flex items-center justify-center gap-3 text-gold/30 text-xs tracking-widest">
-              <span>✦</span>
-              <span className="font-body uppercase">Monica Nalwoga Mukisa</span>
-              <span>✦</span>
-              <span className="font-body uppercase">Sweet 17</span>
-              <span>✦</span>
-              <span className="font-body uppercase">April 2025</span>
-              <span>✦</span>
+          <AnimatePresence mode="wait">
+            {answer && (
+              <motion.p
+                key={answer}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.6 }}
+                className="mt-12 text-2xl md:text-3xl italic text-center"
+                style={{ fontFamily: SERIF, color: C.pine }}
+              >
+                {answer === 'begin'
+                  ? 'Then give me a call. Let us talk it through, properly, and begin again.'
+                  : 'Then take all the time you need. I will respect that, and I will keep doing the work while I wait.'}
+              </motion.p>
+            )}
+          </AnimatePresence>
+
+          <Reveal delay={0.3}>
+            <div className="mt-24 text-center" style={{ fontFamily: SERIF }}>
+              <p className="text-3xl md:text-4xl italic">I am sorry, baby.</p>
+              <p className="mt-4 text-3xl md:text-4xl italic">
+                Signing Off: Your husband, your best friend, your partner, your
+                lover, your family, your home, your Daddy, Your lover, the boy
+                who feels your dreams, and the man who quenches your thirst, the
+                father of your unborn children: Joshua Mukisa <br />I love you,
+                Mami.
+              </p>
+              <p
+                className="mt-8 text-xs uppercase"
+                style={{
+                  fontFamily: MONO,
+                  letterSpacing: '0.3em',
+                  color: C.clay,
+                }}
+              >
+                Joshua
+              </p>
             </div>
           </Reveal>
         </div>

@@ -7,6 +7,7 @@ import FrenchLearner from './pages/French/French';
 import BirthdayForMonica from './pages/Birthday/Birthday';
 import Resume from './pages/Resume/Resume';
 import './editorial-fonts.css';
+import ApologyForMonica from './pages/Birthday/Birthday';
 
 const router = createBrowserRouter([
   {
@@ -18,10 +19,10 @@ const router = createBrowserRouter([
     element: <Resume />,
   },
 
-  // {
-  //   path: '/josh-and-mon',
-  //   element: <ValentinesForMonica />,
-  // },
+  {
+    path: '/lookie',
+    element: <ApologyForMonica />,
+  },
 
   {
     path: '/french',
