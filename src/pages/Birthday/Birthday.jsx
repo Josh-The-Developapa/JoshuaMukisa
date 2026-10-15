@@ -1047,7 +1047,7 @@ export default function ApologyForMonica() {
               >
                 {answer === 'begin'
                   ? 'Then give me a call. Let us talk it through, properly, and begin again.'
-                  : 'Then take all the time you need. I will respect that, and I will keep doing the work while I wait.'}
+                  : 'Fuck no. We are doing this again. You are mine, I am yours, and we are going to make this work. '}
               </motion.p>
             )}
           </AnimatePresence>
