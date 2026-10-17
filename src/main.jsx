@@ -19,10 +19,10 @@ const router = createBrowserRouter([
     element: <Resume />,
   },
 
-  {
-    path: '/lookie',
-    element: <ApologyForMonica />,
-  },
+  // {
+  //   path: '/lookie',
+  //   element: <ApologyForMonica />,
+  // },
 
   {
     path: '/french',

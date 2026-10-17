@@ -1,5 +1,6 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { gsap, ScrollTrigger, prefersReducedMotion } from '../../lib/gsap';
+import JMLogo from '../../assets/JM.svg';
 
 /**
  * Editorial Masthead & Archival Navigation
@@ -200,7 +201,11 @@ const Header = ({ activeLink, onNavLinkClick }) => {
             className="flex flex-shrink-0 items-center gap-3.5"
             aria-label="Back to top"
           >
-            <JMMonogram />
+            <img
+              src={JMLogo}
+              alt="Joshua Mukisa Logo"
+              style={{ height: '70px', width: 'auto' }}
+            />
           </a>
 
           {/* Desktop nav */}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { JMMonogram } from '../Header/Header';
+import JMLogo from '../../assets/JM colored.svg';
 
 const indexRegister = [
   '01. The Story',
@@ -39,7 +40,17 @@ const Footer = () => {
         {/* Col 1: profile lockup */}
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-3.5">
-            <JMMonogram inverted />
+            <div
+            // className={`flex h-[80px] w-[80px] items-center justify-center border border-[#302D2A] bg-[#181614]`}
+            >
+              <img
+                src={JMLogo}
+                alt="Joshua Mukisa Logo"
+                style={{ height: '70px', width: 'auto' }}
+                color="#302D2A"
+              />
+            </div>
+
             <div className="flex flex-col">
               <span className="font-[Newsreader] text-[22px] text-white leading-none">
                 Joshua Mukisa
